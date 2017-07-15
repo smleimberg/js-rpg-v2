@@ -253,7 +253,7 @@
 				{
 					"type":"portal",
 					"map":"map2",
-					"tile":"r18_c18"
+					"tile":"r20_c20"
 				}
 			]
 		},
@@ -294,7 +294,7 @@
 			]
 		},
 		{
-			"tile":"r2_c4",
+			"tile":"r2_c2",
 			"attributes":[
 				{
 					"type":"block",
@@ -303,7 +303,7 @@
 			]
 		},
 		{
-			"tile":"r4_c6",
+			"tile":"r2_c6",
 			"attributes":[
 				{
 					"type":"chest",

@@ -19,6 +19,9 @@ html,body{
     width: 0;
     vertical-align: top;
 }
+#game.map-loading #map{
+    opacity: 0;
+}
 #tiles{
     position: relative;
     width: 100%;
@@ -31,7 +34,7 @@ html,body{
     height: 48px;
     line-height: 48px;
     margin: 1px;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.1);
     display: inline-block;
     vertical-align: top;
 }

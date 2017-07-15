@@ -1,56 +1,97 @@
 
 class JSRPG {
 	constructor(){
-		$.cookie.json = true;
-		this.setupEventListeners();
-		this.getMapData();
+		var _=this;
+		_.heartbeat();
+		_.setupEventListeners();
+		_['gameData'] = _.getGameData();
+		_['sml_rpg_map_'+_.gameData.map] = _.getMapData(_.gameData.map,true);
+		var maps = ['map1','map2'];
+		$.each(maps,function(index,map){
+			_['sml_rpg_map_'+map] = _.getMapData(map,false);
+		});
 	}
 	get animationSpeed(){
 		return 100;
 	}
-	get gameData(){
-		if($.cookie('sml_rpg')){
-		    return $.cookie('sml_rpg');
+	getGameData(){
+		if(this.gameData){
+			return this.gameData;
+		}else if(localStorage.getItem('sml_rpg')){
+		    return JSON.parse(localStorage.getItem('sml_rpg'));
 		}else{
 			var initializationData ={
 				"map":"map1",
-				"tile":"r4_c4",
+				"tile":"r2_c4",
 			    "facing":"s",
 			    "foot":'l',
 			    "mapData":{}
 			};
-		    $.cookie('sml_rpg',initializationData,{expires:365});
+		    this.setGameData(initializationData);
 		    return initializationData;
 		}
+	}
+	setGameData(gameData){
+		this['gameData'] = gameData;
+	}
+	saveTheGame(){
+		var _=this;
+		localStorage.setItem('sml_rpg', JSON.stringify(_.gameData));
+		var maps = ['map1','map2'];
+		$.each(maps,function(index,map){
+			localStorage.setItem('sml_rpg_map_'+map, JSON.stringify(_['sml_rpg_map_'+map]));
+		});
+		console.log('Game Saved: '+( new Date() ) );
+	}
+	heartbeat(){
+		setInterval(function(){ 
+			var loadingStates = ['map-loading'];
+			var statesLoading = 0;
+			$.each(loadingStates,function(index,state){
+				if($('#game').hasClass(state)){
+					statesLoading +=1;
+				}
+			});
+			if(statesLoading>0){
+				$('#game').addClass('loading');
+			}else{
+				$('#game').removeClass('loading');
+			}
+		}, this.animationSpeed);
 	}
 	setupEventListeners(){
 		var _=this;
 		$(window).keydown(function(e) {
 		    //81=q 87=w e=69 r=82 a=65 s=83 d=68
-		    switch(e.keyCode){
-		    case 65: //a=left
-		        _.move('w');
-		        break;
-		    case 68: //d=right
-		        _.move('e');
-		        break;
-		    case 81: //q=
-		        
-		        break;
-		    case 69: //e=
-		        _.use(_.gameData.facing);
-		        break;
-		    case 83: //s=down
-		        _.move('s');
-		        break;
-		    case 87: //w=up
-		        _.move('n');
-		        break;
-		    default:
-		    }
+		    if(!$('#game').hasClass('loading')){
+			    switch(e.keyCode){
+			    case 65: //a=left
+			        _.move('w');
+			        break;
+			    case 68: //d=right
+			        _.move('e');
+			        break;
+			    case 81: //q=
+			        _.saveTheGame();
+			        break;
+			    case 69: //e=
+			        _.use(_.gameData.facing);
+			        break;
+			    case 83: //s=down
+			        _.move('s');
+			        break;
+			    case 87: //w=up
+			        _.move('n');
+			        break;
+			    default:
+			    }
+			}
 		});
 	}
 	buildMap(mapData){
+
+		/* ADJUST GAME STATE */
+		$('#game').addClass('map-loading');
 
 	  	var tileSize = 50;
 	  	/* ADD TILES */
@@ -61,7 +102,9 @@ class JSRPG {
 	  		"height":mapHeight+"px",
 	  	});
 	  	if(mapData.background){
-	  		$('#map').css({'background-image':'/assets/maps/'+mapData.name+'-back.png'})
+	  		$('#map').css({'background-image':"url('/assets/maps/"+mapData.name+"-back.png')"});
+	  	}else{
+	  		$('#map').css({'background-image':""});
 	  	}
 	  	$('#map #tiles').empty();
 	  	for(var r=0;r<mapData.height;r++){
@@ -98,33 +141,47 @@ class JSRPG {
 	  	$('#map #tiles #'+this.gameData.tile).append($token);
 	  	
 	  	/* CENTER MAP ON TOKEN */
-	  	this.positionMap();
+	  	this.centerToken();
+
+	  	/* ADJUST GAME STATE */
+	  	$('#game').removeClass('map-loading');
 	  	
 	}
-	getMapData(){
+	getMapData(map,build){
 		var _=this;
-		var gameData = $.cookie('sml_rpg');
-		if( gameData && gameData.hasOwnProperty('mapData') && gameData.mapData.name == gameData.map ){
-			_.buildMap(gameData.mapData);
-		    return ;
+		if( localStorage.getItem('sml_rpg_map_'+map) ){
+			var mapData = JSON.parse(localStorage.getItem('sml_rpg_map_'+map));
+			if(build){
+				this.buildMap(mapData);
+			}
+		    return mapData;
 		}else{
-			var filePath = '/assets/maps/'+_.gameData.map+'.json';
+			console.log('fetching '+map);
+			var filePath = '/assets/maps/'+map+'.json';
+			var mapData = false;
 			$.ajax({
 				type: 'GET',
 				url: filePath,
+				async: false,
 				cache: false,
 				dataType: 'json',
 				success: function(data){
-					_.buildMap(data);
-					var newGameData = _.gameData;
-					newGameData['mapData'] = data;
-					$.cookie('sml_rpg',newGameData,{expires:365});
+					mapData = data;
+					if(build){
+						_.buildMap(mapData);
+					}
+					console.log('fetched '+map);
+					_.setMapData(map,mapData);
+
 				}
 			});
+			return mapData;
 		}
-		
 	}
-	positionMap(){
+	setMapData(map,mapData){
+		this['sml_rpg_map_'+map] = mapData;
+	}
+	centerToken(){
 
 		var ww = $(window).width();
 	  	var wh = $(window).height();
@@ -149,7 +206,6 @@ class JSRPG {
   			var shift = (wh*0.5) - tokenCenterTop;
   			$('#map').css({'top':'+='+shift+'px'});
   		}
-
 	}
 	getNextTile(key){
 	    var nextId='';
@@ -220,7 +276,7 @@ class JSRPG {
 	    }else{
 	    	$('#token').removeAttr('class').addClass(gameData.facing);
 	    }
-	    $.cookie('sml_rpg',gameData,{expires:365});
+	    _.setGameData(gameData);
 
 	    /* check for events */
 	    var objectTypes = ['portal','item','tool','message'];
@@ -231,13 +287,15 @@ class JSRPG {
 	    			case 'portal':
 	    				gameData.map = object.attr('data-map');
 	    				gameData.tile = object.attr('data-tile');
-	    				$.cookie('sml_rpg',gameData,{expires:365});
-	    				_.getMapData();
+	    				_.setGameData(gameData);
+	    				_.getMapData(gameData.map,true);
 	    				break;
 	    			default:;
 	    		}
 	    	}
 	    });
+
+	    _.centerToken()
 	    
 	}
 	use(dir){
