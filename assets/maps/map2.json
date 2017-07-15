@@ -1,0 +1,17 @@
+{
+	"name":"map2",
+	"width":41,
+	"height":41,
+	"objects":[
+		{
+			"tile":"r18_c18",
+			"attributes":[
+				{
+					"type":"portal",
+					"map":"map1",
+					"tile":"r8_c4"
+				}
+			]
+		}
+	]
+}

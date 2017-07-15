@@ -1,0 +1,165 @@
+html,body{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000;
+}
+#game{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    overflow: hidden;
+}
+#map{
+    position: absolute;
+    height: 0;
+    width: 0;
+    vertical-align: top;
+}
+#tiles{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
+}
+.tile{
+    position: relative;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    margin: 1px;
+    background-color: #fff;
+    display: inline-block;
+    vertical-align: top;
+}
+/* SQUARE TOKEN
+#token{
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    vertical-align: top;
+    background-color: blue;
+    margin: 0;
+    z-index: 10;
+}
+*/
+
+/* LINK TOKEN */
+#token{
+    position: absolute;
+    top: -10px;
+    left: 2px;
+    background: url('../images/linkwithoutshield.png') -50px 0px;
+    background-repeat: no-repeat;
+    background-size: 600px 400px;
+    width: 50px;
+    height: 50px;
+    z-index: 1000 !important;
+}
+#token.n{
+    background-position: -50px -150px;
+}
+#token.nr{
+    background-position: 0px -150px;
+}
+#token.nl{
+    background-position: -100px -150px;
+}
+#token.s{
+    background-position: -50px 0px;
+}
+#token.sr{
+    background-position: 0px 0px;
+}
+#token.sl{
+    background-position: -100px 0px;
+}
+#token.e{
+    background-position: -50px -100px;
+}
+#token.er{
+    background-position: 0px -100px;
+}
+#token.el{
+    background-position: -100px -100px;
+}
+#token.w{
+    background-position: -50px -50px;
+}
+#token.wr{
+    background-position: 0px -50px;
+}
+#token.wl{
+    background-position: -100px -50px;
+}
+
+
+/* OBJECTS */
+.portal{
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: block;
+    background-color: #000;
+    z-index: 1;
+}
+.tree{
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: block;
+    background-color: darkgreen;
+    z-index: 1;
+}
+.wall{
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: block;
+    background-color: grey;
+    z-index: 1;
+}
+.chest{
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: block;
+    background-color: brown;
+    z-index: 1;
+}
+.chest:before{
+    content: " ";
+    position: absolute;
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    left: 16px;
+    top: 16px;
+    border: 5px solid gold;
+    background-color: black;
+    z-index: 3;
+}
+.chest:after{
+    content: " ";
+    position: absolute;
+    display: inline-block;
+    height: 3px;
+    width: 100%;
+    left: 0;
+    top: 22px;
+    background-color: gold;
+    z-index: 2;
+}
+.chest.open:before{
+    top: 0;
+}
+.chest.open:after{
+    top: 7px;
+    border-top: 18px solid #5f4242;
+}
