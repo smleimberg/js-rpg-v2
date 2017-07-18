@@ -2,9 +2,53 @@
 class JSRPG {
 	constructor(){
 		var _=this;
-		_.heartbeat();
-		_.setupEventListeners();
 		_['gameData'] = _.getGameData();
+		if(_.gameData.settings.newGame){
+			$('#body').addClass('newGame');
+		}else{
+			$('#body').addClass('continueGame');
+		}
+		$(document).on('click','#start .form .button',function(e){
+			e.preventDefault();
+			var action = $(this).attr('data-action');
+			switch(action){
+				case 'playNewGame':
+					var newGameSettings = $('#start .new .content .form :input').serializeArray();
+					$.each(newGameSettings,function(index,setting){
+						_.gameData.settings[setting.name]=setting.value;
+					});
+					console.log();
+					_.gameStart();
+					break;
+				case 'continueGame':
+					_.gameStart();
+					break;
+				case 'confirmNewGame':
+					$('#body').removeClass('newGame').removeClass('continueGame').addClass('confirmNewGame');
+					break;
+				case 'yesNewGame':
+					_.deleteGameData();
+					_['gameData'] = _.getGameData();
+					$('#body').removeClass('confirmNewGame').removeClass('continueGame').addClass('newGame');
+					break;
+				case 'noNewGame':
+					$('#body').removeClass('newGame').removeClass('confirmNewGame').addClass('continueGame');
+					break;
+				default:;
+			}
+		});
+	}
+	gameStart(){
+		$('#body').removeClass('gameStart').removeClass('newGame').removeClass('continueGame').removeClass('confirmNewGame');
+		var _=this;
+		if(_.gameData.settings.input == 'gbc'){
+			$('#body').addClass('overlayControls');
+		}else{
+			$('#body').removeClass('overlayControls');
+		}
+		//document.documentElement.webkitRequestFullscreen();
+		_.setupEventListeners();
+		_.heartbeat();
 		_['sml_rpg_map_'+_.gameData.map] = _.getMapData(_.gameData.map,true);
 		var maps = ['map1','map2'];
 		$.each(maps,function(index,map){
@@ -21,6 +65,9 @@ class JSRPG {
 	get animationSpeed(){
 		return 100;
 	}
+	get maps(){
+		return ['map1','map2'];
+	}
 	getGameData(){
 		if(this.gameData){
 			return this.gameData;
@@ -28,6 +75,11 @@ class JSRPG {
 		    return JSON.parse(localStorage.getItem('sml_rpg'));
 		}else{
 			var initializationData ={
+				"settings":{
+					"newGame":true,
+					"input":false,
+					"difficulty":"normal",
+				},
 				"health":20,
 				"xp":0,
 				"level":1,
@@ -44,14 +96,30 @@ class JSRPG {
 	setGameData(gameData){
 		this['gameData'] = gameData;
 	}
+	newGame(){
+		var _=this;
+		localStorage.removeItem('sml_rpg');
+		$.each(_.maps,function(index,map){
+			localStorage.removeItem('sml_rpg_map_'+map);
+		});
+	}
 	saveTheGame(){
 		var _=this;
+		_.gameData.settings.newGame = false;
 		localStorage.setItem('sml_rpg', JSON.stringify(_.gameData));
-		var maps = ['map1','map2'];
-		$.each(maps,function(index,map){
+		$.each(_.maps,function(index,map){
 			localStorage.setItem('sml_rpg_map_'+map, JSON.stringify(_['sml_rpg_map_'+map]));
 		});
 		console.log('Game Saved: '+( new Date() ) );
+	}
+	deleteGameData(){
+		var _=this;
+		delete _.gameData;
+		localStorage.removeItem('sml_rpg');
+		$.each(_.maps,function(index,map){
+			delete _['sml_rpg_map_'+map];
+			localStorage.removeItem('sml_rpg_map_'+map);
+		});
 	}
 	heartbeat(){
 		setInterval(function(){ 
@@ -84,7 +152,7 @@ class JSRPG {
 			    case 81: //q=
 			        _.saveTheGame();
 			        break;
-			    case 69: //e=
+			    case 74: //j=
 			        _.use(_.gameData.facing);
 			        break;
 			    case 83: //s=down
@@ -205,7 +273,7 @@ class JSRPG {
 		this['sml_rpg_map_'+map] = mapData;
 	}
 	centerToken(){
-
+		var _=this;
 		var ww = $(window).width();
 	  	var wh = $(window).height();
 	    var tokenRect = document.getElementById("token").getBoundingClientRect();
@@ -221,12 +289,13 @@ class JSRPG {
   			$('#map').css({'left':'+='+shift+'px'});
   		}
 
-	  	if( tokenCenterTop > (wh*0.5) ){
-  			var shift = tokenCenterTop - (wh*0.5);
+  		var percentFromTop = (_.gameData.settings.input=='gbc') ? 0.33 : 0.5;
+	  	if( tokenCenterTop > (wh*percentFromTop) ){
+  			var shift = tokenCenterTop - (wh*percentFromTop);
   			$('#map').css({'top':'-='+shift+'px'});
   		}
-  		if( tokenCenterTop < (wh*0.5) ){
-  			var shift = (wh*0.5) - tokenCenterTop;
+  		if( tokenCenterTop < (wh*percentFromTop) ){
+  			var shift = (wh*percentFromTop) - tokenCenterTop;
   			$('#map').css({'top':'+='+shift+'px'});
   		}
 	}
@@ -256,6 +325,8 @@ class JSRPG {
 	    return ($("#"+nextId).length > 0) ? nextId : this.gameData.tile;
 	}
 	move(dir){
+
+		$('#game').addClass('map-loading');
 
 		var _=this;
 		var gameData = this.gameData;
@@ -324,7 +395,9 @@ class JSRPG {
 	    	}
 	    }
 
-	    _.centerToken()
+	    _.centerToken();
+
+	    $('#game').removeClass('map-loading');
 	    
 	}
 	use(dir){

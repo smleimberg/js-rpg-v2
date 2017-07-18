@@ -4,6 +4,20 @@ html,body{
     overflow: hidden;
     background-color: #000;
 }
+h1,h2,h3,h4,h5,h6{
+    margin: 0;
+    padding: 0;
+}
+.table{
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+.table .table-cell{
+    display: table;
+    vertical-align: middle;
+}
+
 #game{
     position: relative;
     height: 100vh;
@@ -63,7 +77,7 @@ html,body{
     background-size: 600px 400px;
     width: 50px;
     height: 50px;
-    z-index: 1000 !important;
+    z-index: 100 !important;
 }
 #token.n{
     background-position: -50px -150px;
@@ -169,13 +183,17 @@ html,body{
 
 
 #controls{
+    display: none;
+    pointer-events: none;
+}
+.overlayControls #controls{
+    display: block;
     position: fixed;
-    height: 40vh;
+    height: 35vh;
     width: 100%;
     bottom: 0;
     z-index: 100;
 }
-
 #controls #dpad{
     position: absolute;
     width: 40vw;
@@ -231,4 +249,53 @@ html,body{
 }
 #controls #buttons ._b{
     bottom: 0;
+}
+.screen{
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #eee;
+    z-index: 200;
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 2rem;
+}
+.screen .window{
+    display: none;
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+.screen .window .content{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.gameStart #start{
+    display: block;
+}
+#start.screen .window .content .form .button{
+    display: inline-block;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+#start.screen .new.window .content,
+#start.screen .continue.window .content,
+#start.screen .confirm.window .content{
+    text-align: center;
+}
+.newGame #start.screen .new.window,
+.continueGame #start.screen .continue.window,
+.confirmNewGame #start.screen .confirm.window{
+    display: table;
 }

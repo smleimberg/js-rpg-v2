@@ -5,10 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="assets/css/style.css" rel="stylesheet" />
 </head>
-<body>
+<body id="body" class="gameStart">
 	<div id="game" class="loading">
 		<div id="map">
 			<div id="tiles"></div>
+		</div>
+	</div>
+	<div id="menu">
+		
+	</div>
+	<div id="start" class="screen">
+		<div class="new window">
+				<div class="content">
+					<div class="form">
+						<h1>JSRPG</h1>
+						<p><strong>The JavaScript Role Playing Game.</strong></p>
+						<p>Select your preferred difficulty:<br>
+							<label><input type="radio" name="difficulty" value="easy">Easy</label>
+							<label><input type="radio" name="difficulty" value="normal" checked>Normal</label>
+							<label><input type="radio" name="difficulty" value="hard">Hard</label>
+						</p>
+						<p>GameBoy like controls?:<br>
+							<label><input type="radio" name="input" value="gbc">Yes</label>
+							<label><input type="radio" name="input" value="normal" checked>No</label>
+						</p>
+						<span class="button" data-action="playNewGame">Play</span>
+					</div>
+				</div>
+		</div>
+		<div class="continue window">
+			<div class="content">
+				<div class="form">
+					<h1>JSRPG</h1>
+					<p>Welcome back! Would you like to continue your journey, or start a new game?</p>
+					<span class="button" data-action="continueGame">Continue</span>
+					<span class="button" data-action="confirmNewGame">New Game</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirm window">
+			<div class="content">
+				<div class="form">
+					<h1>JSRPG</h1>
+					<p>Starting a new game will overwrite your current save data and all of your current progress will be lost. Are you sure you want to start a new game?</p>
+					<span class="button" data-action="yesNewGame">Yes</span>
+					<span class="button" data-action="noNewGame">No</span>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div id="controls">
@@ -22,9 +65,6 @@
 			<div class="_a btn" data-btn="a"></div>
 			<div class="_b btn" data-btn="b"></div>
 		</div>
-	</div>
-	<div id="menu">
-		
 	</div>
 	<script src="assets/js/jquery-3.2.1.min.js"></script>
 	<script src="assets/js/game.js"></script>
