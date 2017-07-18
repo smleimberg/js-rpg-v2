@@ -115,7 +115,7 @@ class JSRPG {
 
 	  	/* SET MAP BACKGROUND */
 	  	if(mapData.background){
-	  		$('#map').css({'background-image':"url('/assets/gameData/maps/"+mapData.name+"-back.png')"});
+	  		$('#map').css({'background-image':"url('assets/gameData/maps/"+mapData.name+"-back.png')"});
 	  	}else{
 	  		$('#map').css({'background-image':""});
 	  	}
@@ -143,7 +143,6 @@ class JSRPG {
 			    			}else{
 			    				$('#map #tiles #'+tileID).append($('<div>',{'id':item, 'class':'item'}));
 			    			}
-			    			
 			    		});
 			    	}
 			    }
@@ -175,7 +174,7 @@ class JSRPG {
 				_.buildMap(mapData);
 			}
 		}else{
-			var filePath = '/assets/gameData/maps/'+map+'.json';
+			var filePath = 'assets/gameData/maps/'+map+'.json';
 			$.ajax({
 				type: 'GET',
 				url: filePath,
