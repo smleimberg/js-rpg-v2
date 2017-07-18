@@ -1,0 +1,15 @@
+{
+	"name":"map2",
+	"width":41,
+	"height":41,
+	"tiles":{
+		"r20_c20":{
+			"object":{
+				"class":"portal",
+				"data-type":"portal",
+				"data-map":"map1",
+				"data-tile":"r8_c4"
+			}
+		}
+	}
+}

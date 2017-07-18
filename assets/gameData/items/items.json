@@ -1,4 +1,10 @@
 {
+	"knife1":{
+		"type":"weapon",
+		"name":"knife",
+		"damage":"3",
+		"wieght":"1"
+	},
 	"sword1":{
 		"type":"weapon",
 		"name":"sword",
