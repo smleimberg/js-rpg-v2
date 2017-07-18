@@ -166,3 +166,42 @@ html,body{
     top: 7px;
     border-top: 18px solid #5f4242;
 }
+
+
+#controls{
+    position: fixed;
+    height: 30vh;
+    width: 100%;
+    bottom: 0;
+    z-index: 100;
+}
+
+#controls #dpad{
+    position: absolute;
+    width: 20vh;
+    height: 20vh;
+    left: 5vh;
+    top: 5vh;
+}
+#controls #dpad .btn{
+    position: absolute;
+    width: 33.33%;
+    height: 33.33%;
+    box-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+#controls #dpad .left{
+    top: 33.33%;
+    left: 0;
+}
+#controls #dpad .up{
+    top: 0;
+    left: 33.33%;
+}
+#controls #dpad .right{
+    top: 33.33%;
+    right: 0;
+}
+#controls #dpad .down{
+    left: 33.33%;
+    bottom: 0;
+}

@@ -97,6 +97,9 @@ class JSRPG {
 			    }
 			}
 		});
+		$(document).on('click','#dpad .btn',function(e){
+			_.move($(this).attr('data-dir'));
+		});
 	}
 	buildMap(mapData){
 		var _=this;
