@@ -170,7 +170,7 @@ html,body{
 
 #controls{
     position: fixed;
-    height: 30vh;
+    height: 40vh;
     width: 100%;
     bottom: 0;
     z-index: 100;
@@ -182,8 +182,8 @@ html,body{
     height: 30vw;
     max-width: 150px;
     max-height: 150px;
-    left: 5vw;
-    bottom: 5vh;
+    left: 10vw;
+    bottom: 12vh;
 }
 #controls #dpad .btn{
     position: absolute;
@@ -214,8 +214,8 @@ html,body{
     height: 10vw;
     max-width: 150px;
     max-height: 50px;
-    right: 10vw;
-    bottom: 10vh;
+    right: 12vw;
+    bottom: 17vh;
 }
 
 #controls #buttons .btn{
