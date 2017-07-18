@@ -97,8 +97,11 @@ class JSRPG {
 			    }
 			}
 		});
-		$(document).on('click','#dpad .btn',function(e){
+		$(document).on('click','#controls #dpad .btn',function(e){
 			_.move($(this).attr('data-dir'));
+		});
+		$(document).on('click','#controls #buttons ._a',function(e){
+			_.use(_.gameData.facing);
 		});
 	}
 	buildMap(mapData){

@@ -178,10 +178,12 @@ html,body{
 
 #controls #dpad{
     position: absolute;
-    width: 20vh;
-    height: 20vh;
-    left: 5vh;
-    top: 5vh;
+    width: 30vw;
+    height: 30vw;
+    max-width: 150px;
+    max-height: 150px;
+    left: 5vw;
+    bottom: 5vh;
 }
 #controls #dpad .btn{
     position: absolute;
@@ -204,4 +206,29 @@ html,body{
 #controls #dpad .down{
     left: 33.33%;
     bottom: 0;
+}
+
+#controls #buttons{
+    position: absolute;
+    width: 30vw;
+    height: 10vw;
+    max-width: 150px;
+    max-height: 50px;
+    right: 10vw;
+    bottom: 10vh;
+}
+
+#controls #buttons .btn{
+    position: absolute;
+    top: 0;
+    width: 33%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 100%;
+}
+#controls #buttons ._a{
+    left: 0;
+}
+#controls #buttons ._b{
+    right: 0;
 }
