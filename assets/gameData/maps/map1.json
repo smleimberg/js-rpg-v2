@@ -14,9 +14,9 @@
 			"object":{
 				"class":"chest",
 				"data-type":"chest",
-				"id":"chest1",
-				"items":["sword1","money_100"]
-			}
+				"id":"chest1"
+			},
+			"items":["sword1","money_100"]
 		},
 		"r6_c2":{
 			"items":["money_10"]

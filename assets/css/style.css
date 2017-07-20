@@ -180,6 +180,33 @@ h1,h2,h3,h4,h5,h6{
     top: 7px;
     border-top: 18px solid #5f4242;
 }
+.money,
+.money:before,
+.money:after{
+    content: " ";
+    position: absolute;
+    border: 1px solid #000;
+    border-radius: 100%;
+    background-color: gold;
+}
+.money{
+    width: 20%;
+    height: 20%;
+    left: 30%;
+    top: 40%;
+}
+.money:before{
+    width: 100%;
+    height: 100%;
+    left: 75%;
+    top: 50%;
+}
+.money:after{
+    width: 100%;
+    height: 100%;
+    left: 75%;
+    top: -50%;
+}
 
 
 #controls{
@@ -210,22 +237,58 @@ h1,h2,h3,h4,h5,h6{
     height: 33.33%;
     background-color: rgba(255,255,255,0.5);
 }
+#controls #dpad .btn:before{
+    position: absolute;
+    content: " ";
+    width: 0; 
+    height: 0;
+    left: 50%;
+    top: 50%;
+}
 #controls #dpad .left{
     top: 33.33%;
     left: 0;
 }
+#controls #dpad .left:before{
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid rgba(0,0,0,0.25);
+    margin-left: -5px;
+    margin-top: -10px;
+}  
 #controls #dpad .up{
     top: 0;
     left: 33.33%;
 }
+#controls #dpad .up:before{
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgba(0,0,0,0.25);
+    margin-left: -10px;
+    margin-top: -5px;
+}   
 #controls #dpad .right{
     top: 33.33%;
     right: 0;
 }
+#controls #dpad .right:before{
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid rgba(0,0,0,0.25);
+    margin-left: -5px;
+    margin-top: -10px;
+}  
 #controls #dpad .down{
     left: 33.33%;
     bottom: 0;
 }
+#controls #dpad .down:before{
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid rgba(0,0,0,0.25);
+    margin-left: -10px;
+    margin-top: -5px;
+} 
 
 #controls #buttons{
     position: absolute;
@@ -244,9 +307,19 @@ h1,h2,h3,h4,h5,h6{
     height: 33%;
     background-color: rgba(255,255,255,0.5);
     border-radius: 100%;
+    display: table;
 }
 #controls #buttons ._a{
     top: 0;
+}
+#controls #buttons ._a:before{
+    content: " ";
+    border-radius: 100%;
+    border: 1% solid rgba(0,0,0,0.25);
+    width: 50%;
+    height: 50%;
+    left: 24%;
+    top: 24%;
 }
 #controls #buttons ._b{
     bottom: 0;
