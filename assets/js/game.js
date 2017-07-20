@@ -65,13 +65,15 @@ class JSRPG {
 		});
 	}
 	gameStart(){
-		document.documentElement.webkitRequestFullscreen();
 		$('#body').removeClass('gameStart').removeClass('newGame').removeClass('continueGame').removeClass('confirmNewGame');
 		var _=this;
 		if(_.gameData.settings.input == 'gbc'){
 			$('#body').addClass('overlayControls');
 		}else{
 			$('#body').removeClass('overlayControls');
+		}
+		if(_.gameData.settings.screen == 'fs'){
+			document.documentElement.webkitRequestFullscreen();
 		}
 		_.setupEventListeners();
 		_.heartbeat();
@@ -98,6 +100,7 @@ class JSRPG {
 					"newGame":true,
 					"input":false,
 					"difficulty":"normal",
+					"screen":"normal",
 					"keys":{
 						"n":87,
 						"e":68,
