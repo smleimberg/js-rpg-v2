@@ -65,6 +65,7 @@ class JSRPG {
 		});
 	}
 	gameStart(){
+		document.documentElement.webkitRequestFullscreen();
 		$('#body').removeClass('gameStart').removeClass('newGame').removeClass('continueGame').removeClass('confirmNewGame');
 		var _=this;
 		if(_.gameData.settings.input == 'gbc'){
@@ -72,7 +73,6 @@ class JSRPG {
 		}else{
 			$('#body').removeClass('overlayControls');
 		}
-		//document.documentElement.webkitRequestFullscreen();
 		_.setupEventListeners();
 		_.heartbeat();
 		_['sml_rpg_map_'+_.gameData.map] = _.getMapData(_.gameData.map,true);
