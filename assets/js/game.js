@@ -407,6 +407,7 @@ class JSRPG {
 	    				var oldMap = _.gameData.map;
 	    				_.gameData.map  = _['sml_rpg_map_'+oldMap].tiles[tileID]['object']['data-map'];
 	    				_.gameData.tile = _['sml_rpg_map_'+oldMap].tiles[tileID]['object']['data-tile'];
+	    				_.saveTheGame();
 	    				_.getMapData(_.gameData.map,true);
 	    				break;
 	    			default:;
