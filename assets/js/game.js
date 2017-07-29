@@ -4,220 +4,203 @@ class JSRPG {
 /* GENERAL GAME FUNCTIONS */
 	constructor(){
 		var _=this;
-		_['gameData'] = _.getGameData();
-		if(_.gameData.settings.newGame){
-			$('#body').addClass('newGame');
+		_['staticData']={};
+		_['saveData']={};
+		_['keyDown']=false;
+		$('<div/>', {id: 'game'}).appendTo('#root');
+		$('<div/>', {id: 'map'}).appendTo('#game');
+		$('<div/>', {id: 'tiles'}).appendTo('#map');
+		_.appendGBControls();
+		//_.getMenuData();
+		_.loadGameData();
+		if(_.saveData.settings.newGame){
+			//_.showMenu('newGame');
 		}else{
-			$('#body').addClass('continueGame');
+			
 		}
-		$(document).on('click','#start .form .button',function(e){
-			e.preventDefault();
-			var action = $(this).attr('data-action');
-			switch(action){
-				case 'playNewGame':
-					var newGameSettings = $('#start .new .content .form :input').serializeArray();
-					$.each(newGameSettings,function(index,setting){
-						_.gameData.settings[setting.name]=setting.value;
-					});
-					_.gameStart();
-					break;
-				case 'continueGame':
-					_.gameStart();
-					break;
-				case 'confirmNewGame':
-					$('#body').removeClass('newGame').removeClass('continueGame').addClass('confirmNewGame');
-					break;
-				case 'yesNewGame':
-					_.deleteGameData();
-					_['gameData'] = _.getGameData();
-					$('#body').removeClass('confirmNewGame').removeClass('continueGame').addClass('newGame');
-					break;
-				case 'noNewGame':
-					$('#body').removeClass('newGame').removeClass('confirmNewGame').addClass('continueGame');
-					break;
-				default:;
-			}
+		_.gameStart();
+		/*
+		var newGameSettings = $('#start .new .content .form :input').serializeArray();
+		$.each(newGameSettings,function(index,setting){
+			_.saveData.settings[setting.name]=setting.value;
 		});
+		*/
 	}
-	newGame(){
+	/*
+	get staticDataFilenames(){
+		return ['menus','items','quests','achievements'];
+	}
+	*/
+	get dataFileNames(){
+		return ['settings','character']
+	}
+	loadGameData(){
 		var _=this;
-		localStorage.removeItem('sml_rpg');
-		$.each(_.maps,function(index,map){
-			localStorage.removeItem('sml_rpg_map_'+map);
-		});
+		if( localStorage.getItem('sml_rpg') ){
+			var saveData = JSON.parse(localStorage.getItem('sml_rpg'));
+			for(var prop in saveData) {
+				_[prop] = saveData[prop];
+			}
+		}else{
+			/*
+			$.each(_.staticDataFilenames,function(index,staticDataFilename){
+				_.getData(staticDataFilename,'assets/gameData/'+staticDataFilename+'.json',true);
+			});
+			*/
+			$.each(_.dataFileNames,function(index,dataFileName){
+				_.getData(dataFileName,'assets/gameData/'+dataFileName+'.json');
+			});
+			$.each(_.maps,function(index,map){
+				_.getData(map,_.getMapPath(map));
+			});
+		}
+		return true;
 	}
 	saveTheGame(){
 		var _=this;
-		_.gameData.settings.newGame = false;
-		localStorage.setItem('sml_rpg', JSON.stringify(_.gameData));
-		$.each(_.maps,function(index,map){
-			localStorage.setItem('sml_rpg_map_'+map, JSON.stringify(_['sml_rpg_map_'+map]));
-		});
+		_.keyDown = false;
+		_.saveData.settings.newGame = false;
+		localStorage.setItem('sml_rpg', JSON.stringify(_));
 		console.log('Game Saved: '+( new Date() ) );
 	}
 	deleteGameData(){
 		var _=this;
-		delete _.gameData;
+		_ = {};
 		localStorage.removeItem('sml_rpg');
-		$.each(_.maps,function(index,map){
-			delete _['sml_rpg_map_'+map];
-			localStorage.removeItem('sml_rpg_map_'+map);
-		});
 	}
 	gameStart(){
-		$('#body').removeClass('gameStart').removeClass('newGame').removeClass('continueGame').removeClass('confirmNewGame');
 		var _=this;
-		if(_.gameData.settings.input == 'gbc'){
+		if(_.saveData.settings.input.value == 'gbc'){
 			$('#body').addClass('overlayControls');
 		}else{
 			$('#body').removeClass('overlayControls');
 		}
-		if(_.gameData.settings.screen == 'fs'){
+		if(_.saveData.settings.screen.value == 'fs'){
 			document.documentElement.webkitRequestFullscreen();
 		}
 		_.setupEventListeners();
-		_.heartbeat();
-		_['sml_rpg_map_'+_.gameData.map] = _.getMapData(_.gameData.map,true);
-		var maps = ['map1','map2'];
-		$.each(maps,function(index,map){
-			_['sml_rpg_map_'+map] = _.getMapData(map,false);
-		});
+		_.buildMap(_.saveData.character.map);
 	}
 	get animationSpeed(){
-		return 100;
+		return 50;
 	}
 	get tileSize(){
 		return 50;
 	}
-	getGameData(){
-		if(this.gameData){
-			return this.gameData;
-		}else if(localStorage.getItem('sml_rpg')){
-		    return JSON.parse(localStorage.getItem('sml_rpg'));
-		}else{
-			var initializationData ={
-				"settings":{
-					"newGame":true,
-					"input":false,
-					"difficulty":"normal",
-					"screen":"normal",
-					"keys":{
-						"n":87,
-						"e":68,
-						"s":83,
-						"w":65,
-						"a":74
-					}
-				},
-				"money":0,
-				"map":"map1",
-				"tile":"r2_c4",
-			    "facing":"s",
-			    "foot":'l',
-			    "stats":{
-			    	"xp":0,
-					"level":1,
-					"health":20,
-
-			    },
-			    "inventory":[]
-			};
-		    this.setGameData(initializationData);
-		    return initializationData;
-		}
-	}
-	setGameData(gameData){
-		this['gameData'] = gameData;
-	}
-	heartbeat(){
-		setInterval(function(){ 
-			var loadingStates = ['map-loading'];
-			var statesLoading = 0;
-			$.each(loadingStates,function(index,state){
-				if($('#game').hasClass(state)){
-					statesLoading +=1;
-				}
-			});
-			if(statesLoading>0){
-				$('#game').addClass('loading');
-			}else{
-				$('#game').removeClass('loading');
-			}
-		}, this.animationSpeed);
-	}
 	setupEventListeners(){
 		var _=this;
 		$(window).keydown(function(e) {
-			$.each(_.gameData.settings.keys,function(fn,key){
+			$.each(_.saveData.settings.keys.keyCodes,function(fn,key){
 				if(e.keyCode==key){
 					_.performAction(fn);
+					console.log('key');
 				}
 			});
 		});
 		$(document).on('click','#controls .btn',function(e){
 			_.performAction($(this).attr('data-btn'));
+			console.log('click');
+		});
+		$(document).on('touch','#controls .btn',function(e){
+			_.performAction($(this).attr('data-btn'));
+			console.log('touch');
 		});
 	}
 	performAction(button){
 		var _=this;
-		switch(button){
-			case 'n':
-			case 'e':
-			case 's':
-			case 'w':
-				_.move(button);
-				break;
-			case 'a':
-				_.use(_.gameData.facing);
-				break;
+		if(!_.keyDown){
+			_.keyDown = true;
+			switch(button){
+				case 'n':
+				case 'e':
+				case 's':
+				case 'w':
+					_.move(button);
+					break;
+				case 'a':
+					_.use(_.saveData.character.facing);
+					break;
+			}
+			setTimeout(function(){
+				_.keyDown = false;
+			},_.animationSpeed);
 		}
 	}
+	getData(key,filePath,isStatic=false){
+		var _=this;
+		var dataSet = isStatic ? 'staticData' : 'saveData';
+		$.ajax({
+			type: 'GET',
+			url: filePath,
+			async: false,
+			cache: false,
+			dataType: 'json',
+			success: function(data){
+				_[dataSet][key] = data;
+				return true;
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown){
+				throw new Error("ERROR FETCHING "+key+" JSON DATA: "+errorThrown);
+				return false;
+			}
+		});
+	}
+	/*
+	showMenu(menuID){
+		var _=this;
+		if( _.staticData['menus'].hasOwnProperty(menuID) ){
+			console.log(_.staticData['menus'][menuID]);
+		}
+		return false;
+	}
+	*/
 
 /* MAP FUNCTIONS */
 	get maps(){
 		return ['map1','map2'];
 	}
-	buildMap(mapData){
+	getMapPath(map){
+		return 'assets/gameData/maps/'+map+'.json';
+	}
+	getMapBackroundPath(map){
+		return 'assets/gameData/maps/'+map+'-back.png';
+	}
+	buildMap(map){
 		var _=this;
 
-		/* ADJUST GAME STATE */
-		$('#game').addClass('map-loading');
-
 	  	/* SET MAP SIZE */
-	  	var mapWidth = (mapData.width*_.tileSize);
-	  	var mapHeight = (mapData.height*_.tileSize);
+	  	var mapWidth = (_.saveData[map].width*_.tileSize);
+	  	var mapHeight = (_.saveData[map].height*_.tileSize);
 	  	$('#map').css({
 	  		"width":mapWidth+"px",
 	  		"height":mapHeight+"px",
 	  	});
 
 	  	/* SET MAP BACKGROUND */
-	  	if(mapData.background){
-	  		$('#map').css({'background-image':"url('assets/gameData/maps/"+mapData.name+"-back.png')"});
+	  	if(_.saveData[map].background){
+	  		$('#map').css({'background-image':"url('"+_.getMapBackroundPath(map)+"')"});
 	  	}else{
 	  		$('#map').css({'background-image':""});
 	  	}
 	  	/* ADD EMPTY TILES */
 	  	$('#map #tiles').empty();
-	  	for(var r=0;r<mapData.height;r++){
-	  		for(var c=0;c<mapData.width;c++){
+	  	for(var r=0;r<_.saveData[map].height;r++){
+	  		for(var c=0;c<_.saveData[map].width;c++){
 	  			var $tile = $("<div>", {"id":"r"+r+"_c"+c,"class":"tile"});
 	  			$('#map #tiles').append($tile);
 	  		}
 	  	}
 
-	  	if(mapData.hasOwnProperty('tiles')){
-	  		for (var tileID in mapData.tiles) {
-			    if (mapData.tiles.hasOwnProperty(tileID)) {
+	  	if(_.saveData[map].hasOwnProperty('tiles')){
+	  		for (var tileID in _.saveData[map].tiles) {
+			    if (_.saveData[map].tiles.hasOwnProperty(tileID)) {
 			    	var showTileItems = true;
-			    	if(mapData.tiles[tileID].hasOwnProperty('object')){
-			    		var object = mapData.tiles[tileID].object;
-			    		$('#map #tiles #'+tileID).append($('<div>',object));
-			    		showTileItems = object['data-type']=='chest'?false:true;
+			    	if(_.saveData[map].tiles[tileID].hasOwnProperty('object')){
+			    		$('#map #tiles #'+tileID).append($('<div>',_.saveData[map].tiles[tileID].object));
+			    		showTileItems = _.saveData[map].tiles[tileID].object['data-type']=='chest'?false:true;
 			    	}
-			    	if( showTileItems && mapData.tiles[tileID].hasOwnProperty('items') ){
-			    		var items = mapData.tiles[tileID].items;
-			    		$.each(items,function(index,item){
+			    	if( showTileItems && _.saveData[map].tiles[tileID].hasOwnProperty('items') ){
+			    		$.each(_.saveData[map].tiles[tileID].items,function(index,item){
 			    			if(item.indexOf('money_')==0){
 			    				$('#map #tiles #'+tileID).append($('<div>',{'class':'money'}));
 			    			}else{
@@ -230,78 +213,27 @@ class JSRPG {
 	  	}
 
 	  	/* PLACE TOKEN */
-	  	var $token = $("<div>", {"id":"token","class":_.gameData.facing});
-	  	$('#map #tiles #'+_.gameData.tile).append($token);
+	  	var $token = $("<div>", {"id":"token","class":_.saveData.character.facing});
+	  	$('#map #tiles #'+_.saveData.character.tile).append($token);
 	  	
 	  	/* CENTER MAP ON TOKEN */
 	  	_.centerToken();
-
-	  	/* ADJUST GAME STATE */
-	  	$('#game').removeClass('map-loading');
 	  	
 	}
-	getMapData(map,build){
-		var _=this;
-		var mapData = false;
-		if(_.hasOwnProperty('sml_rpg_map_'+map)){
-			mapData = _['sml_rpg_map_'+map];
-			if(build){
-				_.buildMap(_['sml_rpg_map_'+map]);
-			}
-		}else if( localStorage.getItem('sml_rpg_map_'+map) ){
-			mapData = JSON.parse(localStorage.getItem('sml_rpg_map_'+map));
-			if(build){
-				_.buildMap(mapData);
-			}
-		}else{
-			var filePath = 'assets/gameData/maps/'+map+'.json';
-			$.ajax({
-				type: 'GET',
-				url: filePath,
-				async: false,
-				cache: false,
-				dataType: 'json',
-				success: function(data){
-					mapData = data;
-					if(build){
-						_.buildMap(mapData);
-					}
-					_.setMapData(map,mapData);
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					throw new Error("ERROR FETCHING MAP DATA: "+errorThrown);
-				}
-			});
-		}
-		return mapData;
-	}
-	setMapData(map,mapData){
-		this['sml_rpg_map_'+map] = mapData;
-	}
 	getNextTile(key){
+		var _=this;
 	    var nextId='';
-	    var next_col=0;
-	    var next_row=0;
-	    var currentTile = this.gameData.tile.split("_");
+	    var currentTile = _.saveData.character.tile.split("_");
 	    var row=parseInt(currentTile[0].replace('r', ''), 10);
 	    var col=parseInt(currentTile[1].replace('c', ''), 10);
-	    if(key=='n'){
-	        next_row=row-1;
-	        nextId = "r"+next_row+"_c"+col;
+	    switch(key){
+	    	case 'n': row=row-1; break;
+	    	case 'e': col=col+1;break;
+	    	case 's': row=row+1;break;
+	    	case 'w': col=col-1;break;
 	    }
-	    if(key=='w'){
-	        next_col=col-1;
-	        nextId = "r"+row+"_c"+next_col;
-	    }
-	    if(key=='s'){
-	        next_row=row+1;
-	        nextId = "r"+next_row+"_c"+col;
-	    }
-	    if(key=='e'){
-	        next_col=col+1;
-	        nextId = "r"+row+"_c"+next_col;
-	    }
-	    return ($("#"+nextId).length > 0) ? nextId : this.gameData.tile;
+	    nextId = "r"+row+"_c"+col;
+	    return ($("#"+nextId).length > 0) ? nextId : _.saveData.character.tile;
 	}
 
 /* TOKEN FUNCTIONS */
@@ -309,34 +241,43 @@ class JSRPG {
 		var _=this;
 		var ww = $(window).width();
 	  	var wh = $(window).height();
-	    var currentTile = this.gameData.tile.split("_");
+	    var currentTile = _.saveData.character.tile.split("_");
 	    var row=parseInt(currentTile[0].replace('r', ''), 10);
 	    var col=parseInt(currentTile[1].replace('c', ''), 10);
-	    var percentFromTop = (_.gameData.settings.input=='gbc') ? 0.33 : 0.5;
+	    var percentFromTop = (_.saveData.settings.input.value=='gbc') ? 0.3 : 0.5;
 
-	    $('#map').css({'left':  (ww*0.5)-((col*_.tileSize)+(_.tileSize/2)) , 'top':  (wh*percentFromTop)-((row*_.tileSize)+(_.tileSize/2)) });
+	    var diameter = _.tileSize * 2 * 5;
+	    var viewVertical = wh/diameter*2*percentFromTop;
+	    var viewHorizontal = ww/diameter;
+	    var zoom = viewHorizontal > viewVertical ? viewVertical : viewHorizontal;
+	    var zoom = zoom > 1 ? 1 : zoom;
+
+	    $('#game').css({'zoom':zoom,'width':(100/zoom)+'vw','height':(100/zoom)+'vh'});
+
+	    var left = ((ww/zoom*0.5)-((col*_.tileSize) + (_.tileSize/2)));
+	    var top = ((wh/zoom*percentFromTop)-((row*_.tileSize) + (_.tileSize/2)));
+
+	    $('#map').css({'left': left , 'top': top });
 	}
 	move(dir){
-
-		$('#game').addClass('map-loading');
 
 		var _=this;
 		var nextTile = this.getNextTile(dir);
 		var nextTileIsBlocked = $("#"+nextTile).find('.block,.chest').length > 0;
 		var moveToken = $("#"+nextTile).find('.portal').length <= 0;
-		_.gameData.facing = dir;
+		_.saveData.character.facing = dir;
 
 		/* move token */
-		if(!$('#token').hasClass('moving') && nextTile != _.gameData.tile && !nextTileIsBlocked){
+		if(!$('#token').hasClass('moving') && nextTile != _.saveData.character.tile && !nextTileIsBlocked){
 			
 			/* update save */
-			_.gameData.foot= (_.gameData.foot == 'r' ? 'l' : 'r');
-			_.gameData.tile = nextTile;
+			_.saveData.character.foot= (_.saveData.character.foot == 'r' ? 'l' : 'r');
+			_.saveData.character.tile = nextTile;
 			
 			/* update view */
 			if(moveToken){
-				var id = "#"+_.gameData.tile;
-				$('#token').removeAttr('class').addClass('moving').addClass(_.gameData.facing+_.gameData.foot);
+				var id = "#"+_.saveData.character.tile;
+				$('#token').removeAttr('class').addClass('moving').addClass(_.saveData.character.facing+_.saveData.character.foot);
 				var tokenAnimation = {}, mapAnimation = {};
 				switch(dir){
 		            case 'n':
@@ -354,22 +295,25 @@ class JSRPG {
 		            default:;
 		        }
 		        $("#token").stop().animate(tokenAnimation, _.animationSpeed,function(){
-		            $(this).appendTo(id).removeAttr('class').removeAttr('style').addClass(_.gameData.facing);
+		            $(this).appendTo(id).removeAttr('class').removeAttr('style').addClass(_.saveData.character.facing);
 		            _.centerToken();
 		        });
 		        $("#map").stop().animate(mapAnimation, _.animationSpeed);
+			}else{
+				$('#token').removeAttr('class').addClass('moving').addClass(_.saveData.character.facing+_.saveData.character.foot);
+				setTimeout(function(){
+					$('#token').removeAttr('class').addClass(_.saveData.character.facing);
+				},_.animationSpeed)
 			}
 	    }else{
-	    	$('#token').removeAttr('class').addClass(_.gameData.facing);
+	    	$('#token').removeAttr('class').addClass(_.saveData.character.facing);
 	    }
 
 	    /* check for events */
-	    _.activateTileEvents(_.gameData.tile);
+	    _.activateTileEvents(_.saveData.character.tile);
 
 
 	    _.centerToken();
-
-	    $('#game').removeClass('map-loading');
 	    
 	}
 	use(dir){
@@ -379,41 +323,58 @@ class JSRPG {
 	}
 	activateTileEvents(tileID){
 		var _=this;
-	    if(_['sml_rpg_map_'+_.gameData.map].hasOwnProperty('tiles') && _['sml_rpg_map_'+_.gameData.map].tiles.hasOwnProperty(tileID)){
-	    	if(_['sml_rpg_map_'+_.gameData.map].tiles[tileID].hasOwnProperty('items')){
-	    		$.each(_['sml_rpg_map_'+_.gameData.map].tiles[tileID].items,function(index,item){
+	    if(_.saveData[_.saveData.character.map].hasOwnProperty('tiles') && _.saveData[_.saveData.character.map].tiles.hasOwnProperty(tileID)){
+	    	if(_.saveData[_.saveData.character.map].tiles[tileID].hasOwnProperty('items')){
+	    		$.each(_.saveData[_.saveData.character.map].tiles[tileID].items,function(index,item){
 	    			if(item.indexOf('money_')==0){
 	    				console.log('found '+item);
 	    				var money =parseInt(item.replace('money_', ''), 10);
-	    				_.gameData.money += money;
-	    				var moneyIndex = _['sml_rpg_map_'+_.gameData.map].tiles[tileID].items.indexOf(item);
-	    				_['sml_rpg_map_'+_.gameData.map].tiles[tileID].items.splice(moneyIndex,1);
+	    				_.saveData.character.money += money;
+	    				var moneyIndex = _.saveData[_.saveData.character.map].tiles[tileID].items.indexOf(item);
+	    				_.saveData[_.saveData.character.map].tiles[tileID].items.splice(moneyIndex,1);
 	    				$('#map #tiles #'+tileID).find('.money').remove();
 	    			}else{
 	    				console.log(item);
 	    			}
 	    		});
 	    	}
-	    	if(_['sml_rpg_map_'+_.gameData.map].tiles[tileID].hasOwnProperty('object')){
-	    		switch(_['sml_rpg_map_'+_.gameData.map].tiles[tileID]['object']['data-type']){
+	    	if(_.saveData[_.saveData.character.map].tiles[tileID].hasOwnProperty('object')){
+	    		switch(_.saveData[_.saveData.character.map].tiles[tileID]['object']['data-type']){
 	    			case 'chest':
-	    				console.log();
 	    				var viewObject = $("#"+tileID).find('.chest');
 	    				viewObject.removeClass('closed').addClass('open');
-	    				_['sml_rpg_map_'+_.gameData.map].tiles[tileID]['object'].class += ' open';
+	    				_.saveData[_.saveData.character.map].tiles[tileID]['object'].class += ' open';
 	    				break;
 	    			// DO PORTAL LAST SINCE IT CHANGES THE TILE & MAP VARS	
 	    			case 'portal':
-	    				var oldMap = _.gameData.map;
-	    				_.gameData.map  = _['sml_rpg_map_'+oldMap].tiles[tileID]['object']['data-map'];
-	    				_.gameData.tile = _['sml_rpg_map_'+oldMap].tiles[tileID]['object']['data-tile'];
+	    				var oldMap = _.saveData.character.map;
+	    				_.saveData.character.map  = _.saveData[oldMap].tiles[tileID]['object']['data-map'];
+	    				_.saveData.character.tile = _.saveData[oldMap].tiles[tileID]['object']['data-tile'];
 	    				_.saveTheGame();
-	    				_.getMapData(_.gameData.map,true);
+	    				_.buildMap(_.saveData.character.map);
 	    				break;
 	    			default:;
 	    		}
 	    	}
 	    }
+	}
+	appendGBControls(){
+		var controls = 
+		`<div id="controls">
+			<div id="dpad">
+				<div class="left btn" data-btn="w"></div>
+				<div class="up btn" data-btn="n"></div>
+				<div class="right btn" data-btn="e"></div>
+				<div class="down btn" data-btn="s"></div>
+			</div>
+			<div id="buttons">
+				<div class="_a btn" data-btn="a"></div>
+				<div class="_b btn" data-btn="b"></div>
+			</div>
+			<div class="start btn" data-btn="start"></div>
+		</div>`;
+		$('#root').append(controls);
+		return true;
 	}
 }
 

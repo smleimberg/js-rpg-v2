@@ -1,0 +1,72 @@
+{
+	"newGame":{
+		"title":"JSRPG",
+		"text":"The JavaScript Role Playing Game.",
+		"back":false
+	},
+	"continueGame":{
+		"title":"JSRPG",
+		"text":"Welcome back! Would you like to continue your journey, or start a new game?",
+		"back":false,
+		"submit":[
+			{
+				"text":"Continue",
+				"action":"continueGame"
+			},
+			{
+				"text":"New Game",
+				"action":"startNewGame"
+			}
+		]
+	},
+	"mainMenu":{
+		"title":"JSRPG",
+		"text":"Main Menu",
+		"type":"submenu",
+		"back":"exitMenu",
+		"list":[
+			"inventory",
+			"character",
+			"settings"
+		]
+	},
+	"inventory":{
+		"title":"Inventory",
+		"text":"All the crap that owns you.",
+		"type":"submenu",
+		"back":"mainMenu",
+		"list":[
+			"items",
+			"weapons",
+			"armor"
+		]
+	},
+	"items":{
+		"title":"Items",
+		"text":"They do things.",
+		"type":"itemList",
+		"back":"inventory"
+	},
+	"weapons":{
+		"title":"Weapons",
+		"text":"For reducing the health of your enemies.",
+		"type":"itemList",
+		"back":"inventory"
+	},
+	"armor":{
+		"title":"Armor",
+		"text":"For reducing the attacks of your enemies.",
+		"type":"itemList",
+		"back":"inventory"
+	},
+	"character":{
+		"title":"Character",
+		"text":"Your Stats",
+		"back":"mainMenu"
+	},
+	"settings":{
+		"title":"Game Settings",
+		"text":"Changing how you play the game.",
+		"back":"mainMenu"
+	}
+}

@@ -1,0 +1,71 @@
+{
+	"newGame":true,
+	"keys":{
+		"text":"Keys",
+		"type":"keys",
+		"keyCodes":{
+			"n":87,
+			"e":68,
+			"s":83,
+			"w":65,
+			"a":74
+		},
+		"keyCharacters":{
+			"n":"w",
+			"e":"d",
+			"s":"s",
+			"w":"a",
+			"a":"j"
+		}
+
+	},
+	"difficulty":{
+		"text":"Select your preferred difficulty:",
+		"type":"radio",
+		"value":"normal",
+		"options":[
+			{
+				"text":"Easy",
+				"value":"easy"
+			},
+			{
+				"text":"Normal",
+				"value":"normal"
+			},
+			{
+				"text":"Hard",
+				"value":"hard"
+			}
+		]
+	},
+	"screen":{
+		"text":"Window Size:",
+		"type":"radio",
+		"value":"normal",
+		"options":[
+			{
+				"text":"Normal",
+				"value":"normal"
+			},
+			{
+				"text":"Full Screen",
+				"value":"fs"
+			}
+		]
+	},
+	"input":{
+		"text":"Controls:",
+		"type":"radio",
+		"value":"gbc",
+		"options":[
+			{
+				"text":"GameBoy Like",
+				"value":"gbc"
+			},
+			{
+				"text":"Keyboard",
+				"value":"normal"
+			}
+		]
+	}
+}

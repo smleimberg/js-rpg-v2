@@ -1,0 +1,13 @@
+{
+	"money":0,
+	"map":"map1",
+	"tile":"r2_c4",
+    "facing":"s",
+    "foot":"l",
+    "stats":{
+    	"xp":0,
+		"level":1,
+		"health":20
+    },
+    "inventory":[]
+}

@@ -17,7 +17,15 @@ h1,h2,h3,h4,h5,h6{
     display: table;
     vertical-align: middle;
 }
-
+#root{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    overflow: hidden;
+}
 #game{
     position: relative;
     height: 100vh;
@@ -216,20 +224,21 @@ h1,h2,h3,h4,h5,h6{
 .overlayControls #controls{
     display: block;
     position: fixed;
-    height: 35vh;
+    height: 0;
     width: 100%;
     bottom: 0;
     z-index: 100;
     pointer-events: all;
+    background-color: #333;
 }
 #controls #dpad{
     position: absolute;
     width: 40vw;
     height: 40vw;
-    max-width: 225px;
-    max-height: 225px;
-    left: 10vw;
-    bottom: 10vh;
+    max-width: 40vh;
+    max-height: 40vh;
+    left: 5vw;
+    bottom: 5vh;
 }
 #controls #dpad .btn{
     position: absolute;
@@ -294,10 +303,10 @@ h1,h2,h3,h4,h5,h6{
     position: absolute;
     width: 15vw;
     height: 45vw;
-    max-width: 75px;
-    max-height: 225px;
-    right: 20vw;
-    bottom: 10vh;
+    max-width: 15vh;
+    max-height: 45vh;
+    right: 5vw;
+    bottom: 2.5vh;
 }
 
 #controls #buttons .btn{
@@ -349,27 +358,4 @@ h1,h2,h3,h4,h5,h6{
 .screen .window .content{
     display: table-cell;
     vertical-align: middle;
-}
-
-.gameStart #start{
-    display: block;
-}
-#start.screen .window .content .form .button{
-    display: inline-block;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    margin: 0.5rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-}
-#start.screen .new.window .content,
-#start.screen .continue.window .content,
-#start.screen .confirm.window .content{
-    text-align: center;
-}
-.newGame #start.screen .new.window,
-.continueGame #start.screen .continue.window,
-.confirmNewGame #start.screen .confirm.window{
-    display: table;
 }
