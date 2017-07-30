@@ -246,13 +246,16 @@ class JSRPG {
 	    var col=parseInt(currentTile[1].replace('c', ''), 10);
 	    var percentFromTop = (_.saveData.settings.input.value=='gbc') ? 0.3 : 0.5;
 
+	    /*
 	    var diameter = _.tileSize * 2 * 5;
 	    var viewVertical = wh/diameter*2*percentFromTop;
 	    var viewHorizontal = ww/diameter;
 	    var zoom = viewHorizontal > viewVertical ? viewVertical : viewHorizontal;
 	    var zoom = zoom > 1 ? 1 : zoom;
-
+	    
 	    $('#game').css({'zoom':zoom,'width':(100/zoom)+'vw','height':(100/zoom)+'vh'});
+	    */
+	    var zoom = 1;
 
 	    var left = ((ww/zoom*0.5)-((col*_.tileSize) + (_.tileSize/2)));
 	    var top = ((wh/zoom*percentFromTop)-((row*_.tileSize) + (_.tileSize/2)));
