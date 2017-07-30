@@ -233,12 +233,12 @@ h1,h2,h3,h4,h5,h6{
 }
 #controls #dpad{
     position: absolute;
-    width: 40vw;
-    height: 40vw;
-    max-width: 40vh;
-    max-height: 40vh;
-    left: 5vw;
-    bottom: 5vh;
+    width: 30vw;
+    height: 30vw;
+    max-width: 30vh;
+    max-height: 30vh;
+    left: 10vw;
+    bottom: 10vh;
 }
 #controls #dpad .btn{
     position: absolute;
@@ -301,12 +301,12 @@ h1,h2,h3,h4,h5,h6{
 
 #controls #buttons{
     position: absolute;
-    width: 15vw;
-    height: 45vw;
-    max-width: 15vh;
-    max-height: 45vh;
-    right: 5vw;
-    bottom: 2.5vh;
+    width: 10vw;
+    height: 30vw;
+    max-width: 10vh;
+    max-height: 30vh;
+    right: 20vw;
+    bottom: 10vh;
 }
 
 #controls #buttons .btn{
@@ -332,6 +332,16 @@ h1,h2,h3,h4,h5,h6{
 }
 #controls #buttons ._b{
     bottom: 0;
+}
+#controls .start{
+    position: absolute;
+    display: inline-block;
+    border-radius: 2vh;
+    width: 20vw;
+    height: 2vh;
+    bottom: 5vh;
+    left: 40vw;
+    background-color: rgba(255,255,255,0.5);
 }
 .screen{
     display: none;

@@ -7,11 +7,7 @@ class JSRPG {
 		_['staticData']={};
 		_['saveData']={};
 		_['keyDown']=false;
-		$('<div/>', {id: 'game'}).appendTo('#root');
-		$('<div/>', {id: 'map'}).appendTo('#game');
-		$('<div/>', {id: 'tiles'}).appendTo('#map');
-		_.appendGBControls();
-		//_.getMenuData();
+		_.buildTheGame();
 		_.loadGameData();
 		if(_.saveData.settings.newGame){
 			//_.showMenu('newGame');
@@ -26,11 +22,9 @@ class JSRPG {
 		});
 		*/
 	}
-	/*
 	get staticDataFilenames(){
 		return ['menus','items','quests','achievements'];
 	}
-	*/
 	get dataFileNames(){
 		return ['settings','character']
 	}
@@ -93,17 +87,15 @@ class JSRPG {
 			$.each(_.saveData.settings.keys.keyCodes,function(fn,key){
 				if(e.keyCode==key){
 					_.performAction(fn);
-					console.log('key');
+					//console.log( fn+' key '+key+' '+_.saveData.settings.keys.keyCharacters[fn]);
 				}
 			});
 		});
 		$(document).on('click','#controls .btn',function(e){
 			_.performAction($(this).attr('data-btn'));
-			console.log('click');
 		});
 		$(document).on('touch','#controls .btn',function(e){
 			_.performAction($(this).attr('data-btn'));
-			console.log('touch');
 		});
 	}
 	performAction(button){
@@ -119,6 +111,9 @@ class JSRPG {
 					break;
 				case 'a':
 					_.use(_.saveData.character.facing);
+					break;
+				case 'start':
+					console.log('start');
 					break;
 			}
 			setTimeout(function(){
@@ -359,7 +354,10 @@ class JSRPG {
 	    	}
 	    }
 	}
-	appendGBControls(){
+	buildTheGame(){
+		$('<div/>', {id: 'game'}).appendTo('#root');
+		$('<div/>', {id: 'map'}).appendTo('#game');
+		$('<div/>', {id: 'tiles'}).appendTo('#map');
 		var controls = 
 		`<div id="controls">
 			<div id="dpad">
