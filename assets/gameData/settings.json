@@ -8,14 +8,18 @@
 			"e":68,
 			"s":83,
 			"w":65,
-			"a":74
+			"a":74,
+			"b":75,
+			"start":32
 		},
 		"keyCharacters":{
 			"n":"w",
 			"e":"d",
 			"s":"s",
 			"w":"a",
-			"a":"j"
+			"a":"j",
+			"b":"k",
+			"start":" "
 		}
 
 	},
@@ -56,7 +60,7 @@
 	"input":{
 		"text":"Controls:",
 		"type":"radio",
-		"value":"gbc",
+		"value":"normal",
 		"options":[
 			{
 				"text":"GameBoy Like",

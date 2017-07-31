@@ -17,6 +17,9 @@ h1,h2,h3,h4,h5,h6{
     display: table;
     vertical-align: middle;
 }
+.hidden{
+    display: none;
+}
 #root{
     position: relative;
     height: 100vh;
@@ -216,21 +219,72 @@ h1,h2,h3,h4,h5,h6{
     top: -50%;
 }
 
+.screen{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #eee;
+    z-index: 200;
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    z-index: 100;
+}
+.overlayControls .screen{
+    height: 50vh;
+}
+.screen .window{
+    display: table;
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+.screen .window .content{
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 1rem 2rem 1rem;
+}
+.screen .window .content .btn.rheticle{
+    outline: 5px dotted #f00;
+}
+.screen .window .content .btn{
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+.screen .window .content .display .btn{
+    margin: 0 0 5px 0;
+}
+
+
+
 
 #controls{
     display: none;
     pointer-events: none;
-}
-.overlayControls #controls{
-    display: block;
     position: fixed;
-    height: 0;
+    height: 50vh;
     width: 100%;
     bottom: 0;
     z-index: 100;
+}
+.overlayControls #controls{
+    display: block;
     pointer-events: all;
+}
+.menuOpen #controls{
     background-color: #333;
 }
+
 #controls #dpad{
     position: absolute;
     width: 30vw;
@@ -336,36 +390,10 @@ h1,h2,h3,h4,h5,h6{
 #controls .start{
     position: absolute;
     display: inline-block;
-    border-radius: 2vh;
+    border-radius: 4vh;
     width: 20vw;
-    height: 2vh;
+    height: 4vh;
     bottom: 5vh;
     left: 40vw;
     background-color: rgba(255,255,255,0.5);
-}
-.screen{
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #eee;
-    z-index: 200;
-    overflow: auto;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    padding: 2rem;
-}
-.screen .window{
-    display: none;
-    position: relative;
-    width: 100%;
-    min-height: 100%;
-    box-sizing: border-box;
-}
-.screen .window .content{
-    display: table-cell;
-    vertical-align: middle;
 }

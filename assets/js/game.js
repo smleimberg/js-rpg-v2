@@ -6,15 +6,25 @@ class JSRPG {
 		var _=this;
 		_['staticData']={};
 		_['saveData']={};
-		_['keyDown']=false;
 		_.buildTheGame();
 		_.loadGameData();
-		if(_.saveData.settings.newGame){
-			//_.showMenu('newGame');
-		}else{
-			
+		_['keyDown']=false;
+		_['menuOpen']=false;
+		_['gameStart']=false;
+		if(_.saveData.settings.screen.value == 'fs'){
+			document.documentElement.webkitRequestFullscreen();
 		}
-		_.gameStart();
+		if(_.saveData.settings.input.value == 'gbc'){
+			$('#body').addClass('overlayControls');
+		}else{
+			$('#body').removeClass('overlayControls');
+		}
+		if(_.saveData.settings.newGame){
+			_.showMenu('startScreen');
+		}else{
+			_.showMenu('continueGame');
+		}
+		_.setupEventListeners();
 		/*
 		var newGameSettings = $('#start .new .content .form :input').serializeArray();
 		$.each(newGameSettings,function(index,setting){
@@ -36,11 +46,9 @@ class JSRPG {
 				_[prop] = saveData[prop];
 			}
 		}else{
-			/*
 			$.each(_.staticDataFilenames,function(index,staticDataFilename){
 				_.getData(staticDataFilename,'assets/gameData/'+staticDataFilename+'.json',true);
 			});
-			*/
 			$.each(_.dataFileNames,function(index,dataFileName){
 				_.getData(dataFileName,'assets/gameData/'+dataFileName+'.json');
 			});
@@ -53,73 +61,16 @@ class JSRPG {
 	saveTheGame(){
 		var _=this;
 		_.keyDown = false;
+		_.gameStart = true;
 		_.saveData.settings.newGame = false;
 		localStorage.setItem('sml_rpg', JSON.stringify(_));
 		console.log('Game Saved: '+( new Date() ) );
 	}
 	deleteGameData(){
 		var _=this;
-		_ = {};
+		_.staticData = {};
+		_.saveData = {};
 		localStorage.removeItem('sml_rpg');
-	}
-	gameStart(){
-		var _=this;
-		if(_.saveData.settings.input.value == 'gbc'){
-			$('#body').addClass('overlayControls');
-		}else{
-			$('#body').removeClass('overlayControls');
-		}
-		if(_.saveData.settings.screen.value == 'fs'){
-			document.documentElement.webkitRequestFullscreen();
-		}
-		_.setupEventListeners();
-		_.buildMap(_.saveData.character.map);
-	}
-	get animationSpeed(){
-		return 50;
-	}
-	get tileSize(){
-		return 50;
-	}
-	setupEventListeners(){
-		var _=this;
-		$(window).keydown(function(e) {
-			$.each(_.saveData.settings.keys.keyCodes,function(fn,key){
-				if(e.keyCode==key){
-					_.performAction(fn);
-					//console.log( fn+' key '+key+' '+_.saveData.settings.keys.keyCharacters[fn]);
-				}
-			});
-		});
-		$(document).on('click','#controls .btn',function(e){
-			_.performAction($(this).attr('data-btn'));
-		});
-		$(document).on('touch','#controls .btn',function(e){
-			_.performAction($(this).attr('data-btn'));
-		});
-	}
-	performAction(button){
-		var _=this;
-		if(!_.keyDown){
-			_.keyDown = true;
-			switch(button){
-				case 'n':
-				case 'e':
-				case 's':
-				case 'w':
-					_.move(button);
-					break;
-				case 'a':
-					_.use(_.saveData.character.facing);
-					break;
-				case 'start':
-					console.log('start');
-					break;
-			}
-			setTimeout(function(){
-				_.keyDown = false;
-			},_.animationSpeed);
-		}
 	}
 	getData(key,filePath,isStatic=false){
 		var _=this;
@@ -140,15 +91,234 @@ class JSRPG {
 			}
 		});
 	}
-	/*
+	get animationSpeed(){
+		return 100;
+	}
+	get tileSize(){
+		return 50;
+	}
+	setupEventListeners(){
+		var _=this;
+		$(window).keydown(function(e) {
+			console.log('"'+e.key+'"='+e.keyCode);
+			$.each(_.saveData.settings.keys.keyCodes,function(fn,key){
+				if(e.keyCode==key){
+					_.performAction(fn);
+				}
+			});
+		});
+		$(document).on('click','#controls .btn',function(e){
+			_.performAction($(this).attr('data-btn'));
+		});
+		$(document).on('touch','#controls .btn',function(e){
+			_.performAction($(this).attr('data-btn'));
+		});
+		$(document).on('click','#menu .btn',function(e){
+			_.doMenuAction($(this));
+		});
+		$(document).on('touch','#menu .btn',function(e){
+			_.doMenuAction($(this));
+		});
+		
+	}
+	performAction(button){
+		var _=this;
+		if(!_.keyDown){
+			_.keyDown = true;
+			if(_.menuOpen){
+				switch(button){
+					case 'n':
+					case 'w':
+						var rheticleIndex = parseInt($('#menu .btn.rheticle').attr('data-btn-index'));
+						$('#menu .btn').removeClass('rheticle');
+						if( rheticleIndex > 0){
+							$('#menu #btn_'+(rheticleIndex-1)).addClass('rheticle');
+						}else if(rheticleIndex == 0){
+							$('#menu #btn_'+($('#menu .btn').length-1)).addClass('rheticle');
+						}
+						break;
+					case 's':
+					case 'e':
+						var rheticleIndex = parseInt($('#menu .btn.rheticle').attr('data-btn-index'));
+						$('#menu .btn').removeClass('rheticle');
+						if( rheticleIndex < ($('#menu .btn').length-1) ){
+							$('#menu #btn_'+(rheticleIndex+1)).addClass('rheticle');
+						}else if( rheticleIndex == ($('#menu .btn').length-1) ){
+							$('#menu #btn_0').addClass('rheticle');
+						}
+						break;
+					case 'a':
+						_.doMenuAction($('#menu .btn.rheticle'));
+						break;
+					case 'b':
+						console.log('b key');
+						console.log(_.gameStart);
+						console.log($('#menu #menuBack'));
+						if( _.gameStart && $('#menu #menuBack').length > 0 ){
+							console.log($('#menu #menuBack'));
+							_.doMenuAction($('#menu #menuBack'));
+						}
+						break;
+					case 'start':
+						if( !_.saveData.settings.newGame ){
+							_.hideMenu();
+						}
+						break;
+				}
+			}else{
+				switch(button){
+					case 'n':
+					case 'w':
+					case 's':
+					case 'e':
+						_.move(button);
+						break;
+					case 'a':
+						_.use(_.saveData.character.facing);
+						break;
+					case 'start':
+						_.showMenu('mainMenu');
+						break;
+				}
+			}
+			setTimeout(function(){
+				_.keyDown = false;
+			},_.animationSpeed);
+		}
+	}
+	doMenuAction(button){
+		var _=this;
+		var action = button.attr('data-action');
+		console.log(action);
+		switch(action){
+			case 'openSubmenu':
+				var menu = button.attr('data-menu');
+				if(menu=='exitMenu'){
+					_.hideMenu();
+				}else{
+					_.showMenu(menu);
+				}
+				break;
+			case 'playCurrentGame':
+				_.buildMap(_.saveData.character.map);
+				_.hideMenu();
+				break;
+			case 'playNewGame':
+				_.deleteGameData();
+				_.loadGameData();
+				_.saveTheGame();
+				_.buildMap(_.saveData.character.map);
+				_.hideMenu();
+				break;
+			case 'saveCurrentGame':
+				_.saveTheGame();
+				_.hideMenu();
+				break;
+			case 'showStartScreen':
+				_.showMenu('startScreen');
+				break;
+		}
+	}
+	get menuDataNames(){
+		return ['back','title','text','display','submit'];
+	}
+	hideMenu(){
+		var _=this;
+		$('#menu').addClass('hidden');
+		$('#body').removeClass('menuOpen');
+		_.menuOpen=false;
+	}
 	showMenu(menuID){
 		var _=this;
-		if( _.staticData['menus'].hasOwnProperty(menuID) ){
-			console.log(_.staticData['menus'][menuID]);
+		var menuData = _.buildMenu(menuID);
+		if(menuData != false){
+			$.each(_.menuDataNames,function(index,menuDataName){
+				if(menuData[menuDataName]!=false){
+					$('#menu .'+menuDataName).html(menuData[menuDataName]).removeClass('hidden');
+				}else{
+					$('#menu .'+menuDataName).html('').addClass('hidden');
+				}
+			});
+			if($('#menu .btn').length > 0){
+				$.each($('#menu .btn'),function(index,element){
+					$(element).attr({'id':'btn_'+index,'data-btn-index':index});
+				});
+				$('#menu .btn').removeClass('rheticle');
+				$('#menu .btn:eq(0)').addClass('rheticle');
+			}else{
+				// WTF NO BUTTONS?
+				throw new Error("MENU "+menuID+" HAS NO BUTTONS");
+			}
+			_.menuOpen=true;
+			$('#menu').removeClass('hidden');
+			$('#body').addClass('menuOpen');
+		}else{
+			_.hideMenu();
 		}
-		return false;
+		return true;
 	}
-	*/
+	buildMenu(menuID){
+		var _=this;
+		var menuText = false;
+		if( _.staticData['menus'].hasOwnProperty(menuID) ){
+			menuText = {};
+			$.each(_.menuDataNames,function(index,menuDataName){
+				if(_.staticData['menus'][menuID].hasOwnProperty(menuDataName)){
+					switch(menuDataName){
+						case 'back':
+							if(_.gameStart){
+								menuText['back']='<div class="btn" data-action="openSubmenu" data-menu="'+_.staticData['menus'][menuID]['back']+'">Back</div>';
+							}
+							break;
+						case 'title':
+							menuText['title']='<h1>'+_.staticData['menus'][menuID]['title']+'</h1>';
+							break;
+						case 'text':
+							menuText['text']='<p>'+_.staticData['menus'][menuID]['text']+'</p>';
+							break;
+						case 'submit':
+							var submitHTML = '';
+							$.each(_.staticData['menus'][menuID]['submit'],function(index,button){
+								var dataMenu = '';
+								if(button.hasOwnProperty('menu')){
+									dataMenu = ' data-menu="'+button.menu+'"';
+								}
+								submitHTML += ' <div class="btn" data-action="'+button.action+'" '+dataMenu+'>'+button.text+'</div>';
+							});
+							menuText['submit']=submitHTML;
+							break;
+					}
+				}else{
+					menuText[menuDataName]=false;
+				}
+			});
+			switch(_.staticData['menus'][menuID].type){
+				case 'custom':
+					switch(menuID){
+						case 'newGame':
+							return {'back':false,"title":_.staticData['menus'][menuID].title}
+							break;
+						case 'continueGame':
+							break;
+					}
+					break;
+				case 'submenu':
+					var displayHTML ='';
+					$.each(_.staticData['menus'][menuID].list,function(index,submenuID){
+						if(_.staticData['menus'].hasOwnProperty(submenuID)){
+							displayHTML += '<div class="btn" data-action="openSubmenu" data-menu="'+submenuID+'">'+_.staticData['menus'][submenuID].title+'</div>';
+						}else{
+							throw new Error("ERROR SUBMENU "+submenuID+" DNE");
+						}
+					});
+					menuText['display']=displayHTML;
+					break;
+				case 'itemList':
+					break;
+			}
+		}
+		return menuText;
+	}
 
 /* MAP FUNCTIONS */
 	get maps(){
@@ -162,6 +332,7 @@ class JSRPG {
 	}
 	buildMap(map){
 		var _=this;
+		_.gameStart = true;
 
 	  	/* SET MAP SIZE */
 	  	var mapWidth = (_.saveData[map].width*_.tileSize);
@@ -261,19 +432,26 @@ class JSRPG {
 		var nextTile = this.getNextTile(dir);
 		var nextTileIsBlocked = $("#"+nextTile).find('.block,.chest').length > 0;
 		var moveToken = $("#"+nextTile).find('.portal').length <= 0;
-		_.saveData.character.facing = dir;
 
+
+		/* turn token */
+		if(_.saveData.character.facing != dir || nextTileIsBlocked){
+			_.saveData.character.foot= (_.saveData.character.foot == 'r' ? 'l' : 'r');
+			_.saveData.character.facing = dir;
+			$('#token').removeAttr('class').addClass(_.saveData.character.facing);
+		}
 		/* move token */
-		if(!$('#token').hasClass('moving') && nextTile != _.saveData.character.tile && !nextTileIsBlocked){
+		else if( nextTile != _.saveData.character.tile){
 			
 			/* update save */
 			_.saveData.character.foot= (_.saveData.character.foot == 'r' ? 'l' : 'r');
 			_.saveData.character.tile = nextTile;
+			_.saveData.character.facing = dir;
 			
 			/* update view */
 			if(moveToken){
 				var id = "#"+_.saveData.character.tile;
-				$('#token').removeAttr('class').addClass('moving').addClass(_.saveData.character.facing+_.saveData.character.foot);
+				$('#token').removeAttr('class').addClass(_.saveData.character.facing+_.saveData.character.foot);
 				var tokenAnimation = {}, mapAnimation = {};
 				switch(dir){
 		            case 'n':
@@ -296,21 +474,14 @@ class JSRPG {
 		        });
 		        $("#map").stop().animate(mapAnimation, _.animationSpeed);
 			}else{
-				$('#token').removeAttr('class').addClass('moving').addClass(_.saveData.character.facing+_.saveData.character.foot);
+				$('#token').removeAttr('class').addClass(_.saveData.character.facing+_.saveData.character.foot);
 				setTimeout(function(){
 					$('#token').removeAttr('class').addClass(_.saveData.character.facing);
 				},_.animationSpeed)
 			}
-	    }else{
-	    	$('#token').removeAttr('class').addClass(_.saveData.character.facing);
-	    }
-
-	    /* check for events */
-	    _.activateTileEvents(_.saveData.character.tile);
-
-
-	    _.centerToken();
-	    
+			_.activateTileEvents(_.saveData.character.tile);
+			_.centerToken();
+	    }	    
 	}
 	use(dir){
 		var _=this;
@@ -355,9 +526,27 @@ class JSRPG {
 	    }
 	}
 	buildTheGame(){
-		$('<div/>', {id: 'game'}).appendTo('#root');
-		$('<div/>', {id: 'map'}).appendTo('#game');
-		$('<div/>', {id: 'tiles'}).appendTo('#map');
+		var map = 
+		`<div id="game">
+			<div id="map">
+				<div id="tiles"></div>
+			</div>
+		</div>`;
+		$('#root').append(map);
+		var menu = 
+		`<div id="menu" class="screen">
+			<div class="window">
+				<div class="content">
+					<div class="title"></div>
+					<div class="text"></div>
+					<div class="display"></div>
+					<div class="submit"></div>
+					<div class="back"></div>
+				</div>
+			</div>
+			<div class="rheticle"></div>
+		</div>`;
+		$('#root').append(menu);
 		var controls = 
 		`<div id="controls">
 			<div id="dpad">

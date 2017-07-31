@@ -1,21 +1,24 @@
 {
-	"newGame":{
-		"title":"JSRPG",
-		"text":"The JavaScript Role Playing Game.",
-		"back":false
+	"startScreen":{
+		"title":"New Game",
+		"text":"The JavaScript Role Playing Game (JSRPG).",
+		"type":"custom",
+		"back":"continueGame",
+		"submit":[
+			{
+				"text":"Play",
+				"action":"playNewGame"
+			}
+		]
 	},
 	"continueGame":{
 		"title":"JSRPG",
 		"text":"Welcome back! Would you like to continue your journey, or start a new game?",
-		"back":false,
+		"type":"custom",
 		"submit":[
 			{
 				"text":"Continue",
-				"action":"continueGame"
-			},
-			{
-				"text":"New Game",
-				"action":"startNewGame"
+				"action":"playCurrentGame"
 			}
 		]
 	},
@@ -25,9 +28,22 @@
 		"type":"submenu",
 		"back":"exitMenu",
 		"list":[
+			"save",
 			"inventory",
 			"character",
-			"settings"
+			"settings",
+			"startScreen"
+		]
+	},
+	"save":{
+		"title":"Save",
+		"text":"Save my game data to my browser's local storage.",
+		"back":"mainMenu",
+		"submit":[
+			{
+				"text":"Save",
+				"action":"saveCurrentGame"
+			}
 		]
 	},
 	"inventory":{
@@ -65,8 +81,9 @@
 		"back":"mainMenu"
 	},
 	"settings":{
-		"title":"Game Settings",
+		"title":"Settings",
 		"text":"Changing how you play the game.",
+		"type":"custom",
 		"back":"mainMenu"
 	}
 }
