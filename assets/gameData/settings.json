@@ -60,7 +60,7 @@
 	"input":{
 		"text":"Controls:",
 		"type":"radio",
-		"value":"normal",
+		"value":"gbc",
 		"options":[
 			{
 				"text":"GameBoy Like",
