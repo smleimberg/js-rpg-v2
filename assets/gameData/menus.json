@@ -19,6 +19,11 @@
 			{
 				"text":"Continue",
 				"action":"playCurrentGame"
+			},
+			{
+				"text":"New Game",
+				"action":"openSubmenu",
+				"menu":"startScreen"
 			}
 		]
 	},
@@ -31,8 +36,7 @@
 			"save",
 			"inventory",
 			"character",
-			"settings",
-			"startScreen"
+			"settings"
 		]
 	},
 	"save":{
