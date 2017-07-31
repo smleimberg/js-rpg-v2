@@ -200,10 +200,12 @@ class JSRPG {
 				}
 				break;
 			case 'playCurrentGame':
+				document.documentElement.webkitRequestFullscreen();
 				_.buildMap(_.saveData.character.map);
 				_.hideMenu();
 				break;
 			case 'playNewGame':
+				document.documentElement.webkitRequestFullscreen();
 				_.deleteGameData();
 				_.loadGameData();
 				_.saveTheGame();
