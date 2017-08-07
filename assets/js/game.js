@@ -108,11 +108,11 @@ class JSRPG {
 			});
 		});
 		$(document).on('click touchstart','#controls .btn',function(e){
-			if(!_.keyDown){
-				_.performAction($(this).attr('data-btn'));
-			}
+			e.stopImmediatePropagation();
+			_.performAction($(this).attr('data-btn'));
 		});
 		$(document).on('click touchstart','#menu .btn',function(e){
+			e.stopImmediatePropagation();
 			_.doMenuAction($(this));
 		});
 		
