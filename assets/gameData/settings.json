@@ -1,5 +1,4 @@
 {
-	"newGame":true,
 	"keys":{
 		"text":"Keys",
 		"type":"keys",
@@ -23,29 +22,10 @@
 		}
 
 	},
-	"difficulty":{
-		"text":"Select your preferred difficulty:",
-		"type":"radio",
-		"value":"normal",
-		"options":[
-			{
-				"text":"Easy",
-				"value":"easy"
-			},
-			{
-				"text":"Normal",
-				"value":"normal"
-			},
-			{
-				"text":"Hard",
-				"value":"hard"
-			}
-		]
-	},
 	"screen":{
 		"text":"Window Size:",
 		"type":"radio",
-		"value":"normal",
+		"value":"fs",
 		"options":[
 			{
 				"text":"Normal",

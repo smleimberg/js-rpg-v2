@@ -4,22 +4,22 @@ class JSRPG {
 /* GENERAL GAME FUNCTIONS */
 	constructor(){
 		var _=this;
+		//MAIN OBJECT VARIABLES
+		_['newGame']=true;
 		_['staticData']={};
 		_['saveData']={};
 		_.buildTheGame();
 		_.loadGameData();
+		//FLAGS
 		_['keyDown']=false;
 		_['menuOpen']=false;
 		_['gameStart']=false;
-		if(_.saveData.settings.screen.value == 'fs'){
-			document.documentElement.webkitRequestFullscreen();
-		}
 		if(_.saveData.settings.input.value == 'gbc'){
 			$('#body').addClass('overlayControls');
 		}else{
 			$('#body').removeClass('overlayControls');
 		}
-		if(_.saveData.settings.newGame){
+		if(_.newGame){
 			_.showMenu('startScreen');
 		}else{
 			_.showMenu('continueGame');
@@ -33,10 +33,10 @@ class JSRPG {
 		*/
 	}
 	get staticDataFilenames(){
-		return ['menus','items','quests','achievements'];
+		return ['menus','quests','achievements'];
 	}
 	get dataFileNames(){
-		return ['settings','character']
+		return ['settings','character','items']
 	}
 	loadGameData(){
 		var _=this;
@@ -62,7 +62,7 @@ class JSRPG {
 		var _=this;
 		_.keyDown = false;
 		_.gameStart = true;
-		_.saveData.settings.newGame = false;
+		_.newGame = false;
 		localStorage.setItem('sml_rpg', JSON.stringify(_));
 		console.log('Game Saved: '+( new Date() ) );
 	}
@@ -92,7 +92,7 @@ class JSRPG {
 		});
 	}
 	get animationSpeed(){
-		return 100;
+		return 50;
 	}
 	get tileSize(){
 		return 50;
@@ -110,13 +110,13 @@ class JSRPG {
 		$(document).on('click','#controls .btn',function(e){
 			_.performAction($(this).attr('data-btn'));
 		});
-		$(document).on('touch','#controls .btn',function(e){
+		$(document).on('touchstart','#controls .btn',function(e){
 			_.performAction($(this).attr('data-btn'));
 		});
 		$(document).on('click','#menu .btn',function(e){
 			_.doMenuAction($(this));
 		});
-		$(document).on('touch','#menu .btn',function(e){
+		$(document).on('touchstart','#menu .btn',function(e){
 			_.doMenuAction($(this));
 		});
 		
@@ -136,6 +136,7 @@ class JSRPG {
 						}else if(rheticleIndex == 0){
 							$('#menu #btn_'+($('#menu .btn').length-1)).addClass('rheticle');
 						}
+						_.centerRheticle();
 						break;
 					case 's':
 					case 'e':
@@ -146,21 +147,18 @@ class JSRPG {
 						}else if( rheticleIndex == ($('#menu .btn').length-1) ){
 							$('#menu #btn_0').addClass('rheticle');
 						}
+						_.centerRheticle();
 						break;
 					case 'a':
 						_.doMenuAction($('#menu .btn.rheticle'));
 						break;
 					case 'b':
-						console.log('b key');
-						console.log(_.gameStart);
-						console.log($('#menu #menuBack'));
-						if( _.gameStart && $('#menu #menuBack').length > 0 ){
-							console.log($('#menu #menuBack'));
-							_.doMenuAction($('#menu #menuBack'));
+						if( _.gameStart && $('#menu .back.btn').length == 1 ){
+							_.doMenuAction($('#menu .back.btn'));
 						}
 						break;
 					case 'start':
-						if( !_.saveData.settings.newGame ){
+						if( !_.newGame ){
 							_.hideMenu();
 						}
 						break;
@@ -191,6 +189,11 @@ class JSRPG {
 		var action = button.attr('data-action');
 		console.log(action);
 		switch(action){
+			case 'checkRadioSetting':
+				var radioName = button.find('input').attr('name');
+				$('#menu input[name='+radioName+']').removeAttr('checked');
+				button.find('input').attr('checked','checked');
+				break;
 			case 'openSubmenu':
 				var menu = button.attr('data-menu');
 				if(menu=='exitMenu'){
@@ -200,12 +203,16 @@ class JSRPG {
 				}
 				break;
 			case 'playCurrentGame':
-				document.documentElement.webkitRequestFullscreen();
+				if(_.saveData.settings.screen.value == 'fs'){
+					document.documentElement.webkitRequestFullscreen();
+				}
 				_.buildMap(_.saveData.character.map);
 				_.hideMenu();
 				break;
 			case 'playNewGame':
-				document.documentElement.webkitRequestFullscreen();
+				if(_.saveData.settings.screen.value == 'fs'){
+					document.documentElement.webkitRequestFullscreen();
+				}
 				_.deleteGameData();
 				_.loadGameData();
 				_.saveTheGame();
@@ -262,25 +269,25 @@ class JSRPG {
 	buildMenu(menuID){
 		var _=this;
 		var menuText = false;
-		if( _.staticData['menus'].hasOwnProperty(menuID) ){
+		if( _.staticData.menus.hasOwnProperty(menuID) ){
 			menuText = {};
 			$.each(_.menuDataNames,function(index,menuDataName){
-				if(_.staticData['menus'][menuID].hasOwnProperty(menuDataName)){
+				if(_.staticData.menus[menuID].hasOwnProperty(menuDataName)){
 					switch(menuDataName){
 						case 'back':
 							if(_.gameStart){
-								menuText['back']='<div class="btn" data-action="openSubmenu" data-menu="'+_.staticData['menus'][menuID]['back']+'">Back</div>';
+								menuText['back']='<div class="back btn" data-action="openSubmenu" data-menu="'+_.staticData.menus[menuID]['back']+'">Back</div>';
 							}
 							break;
 						case 'title':
-							menuText['title']='<h1>'+_.staticData['menus'][menuID]['title']+'</h1>';
+							menuText['title']='<h1>'+_.staticData.menus[menuID]['title']+'</h1>';
 							break;
 						case 'text':
-							menuText['text']='<p>'+_.staticData['menus'][menuID]['text']+'</p>';
+							menuText['text']='<p>'+_.staticData.menus[menuID]['text']+'</p>';
 							break;
 						case 'submit':
 							var submitHTML = '';
-							$.each(_.staticData['menus'][menuID]['submit'],function(index,button){
+							$.each(_.staticData.menus[menuID]['submit'],function(index,button){
 								var dataMenu = '';
 								if(button.hasOwnProperty('menu')){
 									dataMenu = ' data-menu="'+button.menu+'"';
@@ -294,21 +301,36 @@ class JSRPG {
 					menuText[menuDataName]=false;
 				}
 			});
-			switch(_.staticData['menus'][menuID].type){
+			switch(_.staticData.menus[menuID].type){
 				case 'custom':
+					var displayHTML ='';
 					switch(menuID){
-						case 'newGame':
-							return {'back':false,"title":_.staticData['menus'][menuID].title}
+						case 'settings':
+						case 'startScreen':
+							//console.log(_.saveData.settings);
+							for(var setting in _.saveData.settings){
+								switch(_.saveData.settings[setting].type){
+									case 'radio': 
+										displayHTML += '<p><strong>'+_.saveData.settings[setting].text+'</strong></p>';
+										$.each(_.saveData.settings[setting].options,function(index,option){
+											console.log(option);
+											var checked = _.saveData.settings[setting].value == option.value ? 'checked' : '';
+											displayHTML += '<label class="setting btn" data-action="checkRadioSetting"><input type="radio" name="'+setting+'" value="'+option.value+'" '+checked+'>'+option.text+'</label>';
+										});
+										
+								}
+							}
 							break;
 						case 'continueGame':
 							break;
 					}
+					menuText['display'] = displayHTML;
 					break;
 				case 'submenu':
 					var displayHTML ='';
-					$.each(_.staticData['menus'][menuID].list,function(index,submenuID){
-						if(_.staticData['menus'].hasOwnProperty(submenuID)){
-							displayHTML += '<div class="btn" data-action="openSubmenu" data-menu="'+submenuID+'">'+_.staticData['menus'][submenuID].title+'</div>';
+					$.each(_.staticData.menus[menuID].list,function(index,submenuID){
+						if(_.staticData.menus.hasOwnProperty(submenuID)){
+							displayHTML += '<div class="btn" data-action="openSubmenu" data-menu="'+submenuID+'">'+_.staticData.menus[submenuID].title+'</div>';
 						}else{
 							throw new Error("ERROR SUBMENU "+submenuID+" DNE");
 						}
@@ -320,6 +342,12 @@ class JSRPG {
 			}
 		}
 		return menuText;
+	}
+	centerRheticle(){
+		var _=this;
+	    var rheticleCenter = $('#menu .btn.rheticle').position().top + ( $('#menu .btn.rheticle').height() / 2 ),
+	    menuCenter = $('#menu').height() / 2;
+	    $('#menu').animate({'scrollTop':rheticleCenter-menuCenter},_.animationSpeed)
 	}
 
 /* MAP FUNCTIONS */
@@ -546,22 +574,21 @@ class JSRPG {
 					<div class="back"></div>
 				</div>
 			</div>
-			<div class="rheticle"></div>
 		</div>`;
 		$('#root').append(menu);
 		var controls = 
 		`<div id="controls">
 			<div id="dpad">
-				<div class="left btn" data-btn="w"></div>
-				<div class="up btn" data-btn="n"></div>
-				<div class="right btn" data-btn="e"></div>
-				<div class="down btn" data-btn="s"></div>
+				<button class="left btn" data-btn="w"></button>
+				<button class="up btn" data-btn="n"></button>
+				<button class="right btn" data-btn="e"></button>
+				<button class="down btn" data-btn="s"></button>
 			</div>
 			<div id="buttons">
-				<div class="_a btn" data-btn="a"></div>
-				<div class="_b btn" data-btn="b"></div>
+				<button class="_a btn" data-btn="a"></button>
+				<button class="_b btn" data-btn="b"></button>
 			</div>
-			<div class="start btn" data-btn="start"></div>
+			<button class="start btn" data-btn="start"></button>
 		</div>`;
 		$('#root').append(controls);
 		return true;

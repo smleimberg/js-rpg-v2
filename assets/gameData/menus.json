@@ -69,13 +69,13 @@
 	},
 	"weapons":{
 		"title":"Weapons",
-		"text":"For reducing the health of your enemies.",
+		"text":"For slaying your enemies.",
 		"type":"itemList",
 		"back":"inventory"
 	},
 	"armor":{
 		"title":"Armor",
-		"text":"For reducing the attacks of your enemies.",
+		"text":"It protects your physical body.",
 		"type":"itemList",
 		"back":"inventory"
 	},
@@ -88,6 +88,12 @@
 		"title":"Settings",
 		"text":"Changing how you play the game.",
 		"type":"custom",
-		"back":"mainMenu"
+		"back":"mainMenu",
+		"submit":[
+			{
+				"text":"Update Settings",
+				"action":"updateSettings"
+			}
+		]
 	}
 }
