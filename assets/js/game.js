@@ -107,16 +107,12 @@ class JSRPG {
 				}
 			});
 		});
-		$(document).on('click','#controls .btn',function(e){
-			_.performAction($(this).attr('data-btn'));
+		$(document).on('click touchstart','#controls .btn',function(e){
+			if(!_.keyDown){
+				_.performAction($(this).attr('data-btn'));
+			}
 		});
-		$(document).on('touchstart','#controls .btn',function(e){
-			_.performAction($(this).attr('data-btn'));
-		});
-		$(document).on('click','#menu .btn',function(e){
-			_.doMenuAction($(this));
-		});
-		$(document).on('touchstart','#menu .btn',function(e){
+		$(document).on('click touchstart','#menu .btn',function(e){
 			_.doMenuAction($(this));
 		});
 		
