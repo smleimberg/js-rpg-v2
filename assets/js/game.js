@@ -121,25 +121,25 @@ class JSRPG {
 				switch(sValue){
 					case 'fs': 
 						var docElm = document.documentElement;
-						if (docElm.requestFullscreen) {
-				            docElm.requestFullscreen();
+						if (docElm.webkitRequestFullScreen) {
+				            docElm.webkitRequestFullScreen();
 				        } else if (docElm.mozRequestFullScreen) {
 				            docElm.mozRequestFullScreen();
-				        } else if (docElm.webkitRequestFullScreen) {
-				            docElm.webkitRequestFullScreen();
 				        } else if (docElm.msRequestFullscreen) {
 				            docElm.msRequestFullscreen();
+				        } else if (docElm.requestFullscreen) {
+				            docElm.requestFullscreen();
 				        }
 						break
 					default: 
-						if (document.exitFullscreen) {
-				            document.exitFullscreen();
-				        } else if (document.webkitExitFullscreen) {
+						if (document.webkitExitFullscreen) {
 				            document.webkitExitFullscreen();
 				        } else if (document.mozCancelFullScreen) {
 				            document.mozCancelFullScreen();
 				        } else if (document.msExitFullscreen) {
 				            document.msExitFullscreen();
+				        } else if (document.exitFullscreen) {
+				            document.exitFullscreen();
 				        }
 						break;
 				}
