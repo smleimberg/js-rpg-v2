@@ -114,6 +114,9 @@ class JSRPG {
 			e.stopImmediatePropagation();
 			_.showMenu('mainMenu');
 		});
+		$(window).on('resize',function(e){
+			_.centerToken();
+		});
 	}
 	updateSettingView(sName,sValue){
 		switch(sName){
@@ -282,6 +285,7 @@ class JSRPG {
 		$('#menu').addClass('hidden');
 		$('#body').removeClass('menuOpen');
 		_.menuOpen=false;
+		_.centerToken();
 	}
 	showMenu(menuID){
 		var _=this;
