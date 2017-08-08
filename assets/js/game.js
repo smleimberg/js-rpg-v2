@@ -302,7 +302,7 @@ class JSRPG {
 				throw new Error("MENU "+menuID+" HAS NO BUTTONS");
 			}
 			_.menuOpen=true;
-			$('#menu').removeClass('hidden');
+			$('#menu').removeClass('hidden').scrollTop(0);
 			$('#body').addClass('menuOpen');
 		}else{
 			_.hideMenu();
