@@ -219,6 +219,47 @@ h1,h2,h3,h4,h5,h6{
     top: -50%;
 }
 
+#menu-toggle {
+  transition: all 0.5s ease-in-out;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  padding: 5px 15px;
+  z-index: 9999;
+  border-radius: 100%;
+  border: 1px solid #fff;
+  background-color: rgba(0, 0, 0, 0.5); }
+  #menu-toggle #hamburger {
+    display: inline-block;
+    width: 30px; }
+    #menu-toggle #hamburger:before, #menu-toggle #hamburger:after {
+      content: " ";
+      transform-origin: 0 1px;
+      -webkit-transform-origin: 0 1px;
+      /* Chrome, Safari, Opera */
+      -ms-transform-origin: 0 1px;
+      /* IE 9 */ }
+    #menu-toggle #hamburger:before, #menu-toggle #hamburger:after,
+    #menu-toggle #hamburger > span {
+      display: block;
+      border-top: 2px solid rgba(255, 255, 255, 0.8);
+      width: 100%;
+      height: 0;
+      margin-top: 9px;
+      margin-bottom: 9px;
+      transition: all 0.5s ease-in-out; }
+    #menu-toggle #hamburger:before {
+      margin-top: 10px; }
+    #menu-toggle #hamburger:after {
+      margin-bottom: 7px; }
+  #menu-toggle:focus {
+    outline: none; }
+  .menuOpen #menu-toggle,
+  .overlayControls #menu-toggle {
+    display: none; }
+
+
 .screen{
     position: fixed;
     left: 0;
@@ -287,12 +328,12 @@ h1,h2,h3,h4,h5,h6{
 
 #controls #dpad{
     position: absolute;
-    width: 30vw;
-    height: 30vw;
-    max-width: 30vh;
-    max-height: 30vh;
-    left: 10vw;
-    bottom: 10vh;
+    width: 45vw;
+    height: 45vw;
+    max-width: 45vh;
+    max-height: 45vh;
+    left: 2.5vw;
+    top: 2.5vh;
 }
 #controls #dpad .btn{
     position: absolute;
@@ -356,18 +397,17 @@ h1,h2,h3,h4,h5,h6{
 
 #controls #buttons{
     position: absolute;
-    width: 10vw;
-    height: 30vw;
-    max-width: 10vh;
-    max-height: 30vh;
-    right: 20vw;
-    bottom: 10vh;
+    width: 45vw;
+    height: 45vw;
+    max-width: 45vh;
+    max-height: 45vh;
+    right: 2.5vw;
+    top: 2.5vh;
 }
 
 #controls #buttons .btn{
     position: absolute;
-    left: 0;
-    width: 100%;
+    width: 33%;
     height: 33%;
     background-color: rgba(255,255,255,0.5);
     border-radius: 100%;
@@ -375,7 +415,8 @@ h1,h2,h3,h4,h5,h6{
     border: none;
 }
 #controls #buttons ._a{
-    top: 0;
+    left: 0;
+    top: 33%;
 }
 #controls #buttons ._a:before{
     content: " ";
@@ -387,7 +428,8 @@ h1,h2,h3,h4,h5,h6{
     top: 24%;
 }
 #controls #buttons ._b{
-    bottom: 0;
+    top:0;
+    right:0;
 }
 #controls .start{
     position: absolute;
@@ -395,7 +437,7 @@ h1,h2,h3,h4,h5,h6{
     border-radius: 4vh;
     width: 20vw;
     height: 4vh;
-    bottom: 5vh;
+    bottom: 2.5vh;
     left: 40vw;
     background-color: rgba(255,255,255,0.5);
     border: none;
@@ -404,3 +446,8 @@ h1,h2,h3,h4,h5,h6{
     display: block;
     margin: 0 0 5px 5%;
 }
+.screen .window .content .submit .btn,
+.screen .window .content .back .btn{
+    text-align: center;
+}
+

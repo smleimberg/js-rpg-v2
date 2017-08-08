@@ -14,11 +14,7 @@ class JSRPG {
 		_['keyDown']=false;
 		_['menuOpen']=false;
 		_['gameStart']=false;
-		if(_.saveData.settings.input.value == 'gbc'){
-			$('#body').addClass('overlayControls');
-		}else{
-			$('#body').removeClass('overlayControls');
-		}
+		_.updateSettingView('input',_.saveData.settings.input.value);
 		if(_.newGame){
 			_.showMenu('startScreen');
 		}else{
@@ -64,7 +60,6 @@ class JSRPG {
 		_.gameStart = true;
 		_.newGame = false;
 		localStorage.setItem('sml_rpg', JSON.stringify(_));
-		console.log('Game Saved: '+( new Date() ) );
 	}
 	deleteGameData(){
 		var _=this;
@@ -100,7 +95,7 @@ class JSRPG {
 	setupEventListeners(){
 		var _=this;
 		$(window).keydown(function(e) {
-			console.log('"'+e.key+'"='+e.keyCode);
+
 			$.each(_.saveData.settings.keys.keyCodes,function(fn,key){
 				if(e.keyCode==key){
 					_.performAction(fn);
@@ -115,7 +110,60 @@ class JSRPG {
 			e.stopImmediatePropagation();
 			_.doMenuAction($(this));
 		});
-		
+		$(document).on('click touchstart','#menu-toggle',function(e){
+			e.stopImmediatePropagation();
+			_.showMenu('mainMenu');
+		});
+	}
+	updateSettingView(sName,sValue){
+		switch(sName){
+			case 'screen':
+
+				switch(sValue){
+					case 'fs': 
+						var docElm = document.documentElement;
+						if (docElm.requestFullscreen) {
+				            docElm.requestFullscreen();
+				        } else if (docElm.mozRequestFullScreen) {
+				            docElm.mozRequestFullScreen();
+				        } else if (docElm.webkitRequestFullScreen) {
+				            docElm.webkitRequestFullScreen();
+				        } else if (docElm.msRequestFullscreen) {
+				            docElm.msRequestFullscreen();
+				        }
+						break
+					default: 
+						if (document.exitFullscreen) {
+				            document.exitFullscreen();
+				        } else if (document.webkitExitFullscreen) {
+				            document.webkitExitFullscreen();
+				        } else if (document.mozCancelFullScreen) {
+				            document.mozCancelFullScreen();
+				        } else if (document.msExitFullscreen) {
+				            document.msExitFullscreen();
+				        }
+						break;
+				}
+				break;
+			case 'input':
+				switch(sValue){
+					case 'gbc':
+						$('#body').addClass('overlayControls');
+						break;
+					default:
+						$('#body').removeClass('overlayControls');
+						break;
+				}
+				break;
+		}
+	}
+	updateSettings(){
+		var _=this;
+		var newGameSettings = $('#menu .window .content .display :input').serializeArray();
+		$.each(newGameSettings,function(index,setting){
+			_.saveData.settings[setting.name].value=setting.value;
+			_.updateSettingView(setting.name,setting.value);
+		});
 	}
 	performAction(button){
 		var _=this;
@@ -154,7 +202,7 @@ class JSRPG {
 						}
 						break;
 					case 'start':
-						if( !_.newGame ){
+						if( _.gameStart ){
 							_.hideMenu();
 						}
 						break;
@@ -183,8 +231,11 @@ class JSRPG {
 	doMenuAction(button){
 		var _=this;
 		var action = button.attr('data-action');
-		console.log(action);
+
 		switch(action){
+			case 'updateSettings':
+				_.updateSettings();
+				break;
 			case 'checkRadioSetting':
 				var radioName = button.find('input').attr('name');
 				$('#menu input[name='+radioName+']').removeAttr('checked');
@@ -199,16 +250,12 @@ class JSRPG {
 				}
 				break;
 			case 'playCurrentGame':
-				if(_.saveData.settings.screen.value == 'fs'){
-					document.documentElement.webkitRequestFullscreen();
-				}
+				_.updateSettings();
 				_.buildMap(_.saveData.character.map);
 				_.hideMenu();
 				break;
 			case 'playNewGame':
-				if(_.saveData.settings.screen.value == 'fs'){
-					document.documentElement.webkitRequestFullscreen();
-				}
+				_.updateSettings();
 				_.deleteGameData();
 				_.loadGameData();
 				_.saveTheGame();
@@ -271,7 +318,7 @@ class JSRPG {
 				if(_.staticData.menus[menuID].hasOwnProperty(menuDataName)){
 					switch(menuDataName){
 						case 'back':
-							if(_.gameStart){
+							if(!_.newGame){
 								menuText['back']='<div class="back btn" data-action="openSubmenu" data-menu="'+_.staticData.menus[menuID]['back']+'">Back</div>';
 							}
 							break;
@@ -303,13 +350,11 @@ class JSRPG {
 					switch(menuID){
 						case 'settings':
 						case 'startScreen':
-							//console.log(_.saveData.settings);
 							for(var setting in _.saveData.settings){
 								switch(_.saveData.settings[setting].type){
 									case 'radio': 
 										displayHTML += '<p><strong>'+_.saveData.settings[setting].text+'</strong></p>';
 										$.each(_.saveData.settings[setting].options,function(index,option){
-											console.log(option);
 											var checked = _.saveData.settings[setting].value == option.value ? 'checked' : '';
 											displayHTML += '<label class="setting btn" data-action="checkRadioSetting"><input type="radio" name="'+setting+'" value="'+option.value+'" '+checked+'>'+option.text+'</label>';
 										});
@@ -520,14 +565,14 @@ class JSRPG {
 	    	if(_.saveData[_.saveData.character.map].tiles[tileID].hasOwnProperty('items')){
 	    		$.each(_.saveData[_.saveData.character.map].tiles[tileID].items,function(index,item){
 	    			if(item.indexOf('money_')==0){
-	    				console.log('found '+item);
+
 	    				var money =parseInt(item.replace('money_', ''), 10);
 	    				_.saveData.character.money += money;
 	    				var moneyIndex = _.saveData[_.saveData.character.map].tiles[tileID].items.indexOf(item);
 	    				_.saveData[_.saveData.character.map].tiles[tileID].items.splice(moneyIndex,1);
 	    				$('#map #tiles #'+tileID).find('.money').remove();
 	    			}else{
-	    				console.log(item);
+
 	    			}
 	    		});
 	    	}
@@ -560,14 +605,18 @@ class JSRPG {
 		</div>`;
 		$('#root').append(map);
 		var menu = 
-		`<div id="menu" class="screen">
+		`
+		<button id="menu-toggle">
+			<span id="hamburger"><span></span></span>
+		</button>
+		<div id="menu" class="screen">
 			<div class="window">
 				<div class="content">
+					<div class="back"></div>
 					<div class="title"></div>
 					<div class="text"></div>
 					<div class="display"></div>
 					<div class="submit"></div>
-					<div class="back"></div>
 				</div>
 			</div>
 		</div>`;

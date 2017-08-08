@@ -35,6 +35,7 @@
 		"list":[
 			"save",
 			"inventory",
+			"quests",
 			"character",
 			"settings"
 		]
@@ -49,6 +50,11 @@
 				"action":"saveCurrentGame"
 			}
 		]
+	},
+	"quests":{
+		"title":"Quests",
+		"text":"Shit to do, people to see, stuff to kill.",
+		"back":"mainMenu"
 	},
 	"inventory":{
 		"title":"Inventory",
