@@ -51,6 +51,16 @@
 			}
 		]
 	},
+	"saveComplete":{
+		"title":"Save Complete",
+		"text":"Fuck yeah!",
+		"submit":[
+			{
+				"text":"Ok",
+				"action":"okSaveComplete"
+			}
+		]
+	},
 	"quests":{
 		"title":"Quests",
 		"text":"Shit to do, people to see, stuff to kill.",

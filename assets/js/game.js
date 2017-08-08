@@ -264,7 +264,10 @@ class JSRPG {
 				break;
 			case 'saveCurrentGame':
 				_.saveTheGame();
-				_.hideMenu();
+				_.showMenu('saveComplete');
+				break;
+			case 'okSaveComplete':
+				_.showMenu('mainMenu');
 				break;
 			case 'showStartScreen':
 				_.showMenu('startScreen');
