@@ -95,22 +95,22 @@ class JSRPG {
 	setupEventListeners(){
 		var _=this;
 		$(window).keydown(function(e) {
-
 			$.each(_.saveData.settings.keys.keyCodes,function(fn,key){
 				if(e.keyCode==key){
 					_.performAction(fn);
 				}
 			});
 		});
-		$(document).on('click touchstart','#controls .btn',function(e){
+		var touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+		$(document).on(touchEvent,'#controls .btn',function(e){
 			e.stopImmediatePropagation();
 			_.performAction($(this).attr('data-btn'));
 		});
-		$(document).on('click touchstart','#menu .btn',function(e){
+		$(document).on(touchEvent,'#menu .btn',function(e){
 			e.stopImmediatePropagation();
 			_.doMenuAction($(this));
 		});
-		$(document).on('click touchstart','#menu-toggle',function(e){
+		$(document).on(touchEvent,'#menu-toggle',function(e){
 			e.stopImmediatePropagation();
 			_.showMenu('mainMenu');
 		});
@@ -118,7 +118,6 @@ class JSRPG {
 	updateSettingView(sName,sValue){
 		switch(sName){
 			case 'screen':
-
 				switch(sValue){
 					case 'fs': 
 						var docElm = document.documentElement;
@@ -166,6 +165,7 @@ class JSRPG {
 		});
 	}
 	performAction(button){
+
 		var _=this;
 		if(!_.keyDown){
 			_.keyDown = true;
