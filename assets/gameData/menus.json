@@ -104,12 +104,6 @@
 		"title":"Settings",
 		"text":"Changing how you play the game.",
 		"type":"custom",
-		"back":"mainMenu",
-		"submit":[
-			{
-				"text":"Update Settings",
-				"action":"updateSettings"
-			}
-		]
+		"back":"mainMenu"
 	}
 }

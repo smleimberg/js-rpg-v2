@@ -101,17 +101,21 @@ class JSRPG {
 				}
 			});
 		});
-		var touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+		var touchEvent = 'click';
+		//var touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
 		$(document).on(touchEvent,'#controls .btn',function(e){
 			e.stopImmediatePropagation();
+			e.preventDefault();
 			_.performAction($(this).attr('data-btn'));
 		});
 		$(document).on(touchEvent,'#menu .btn',function(e){
 			e.stopImmediatePropagation();
+			e.preventDefault();
 			_.doMenuAction($(this));
 		});
 		$(document).on(touchEvent,'#menu-toggle',function(e){
 			e.stopImmediatePropagation();
+			e.preventDefault();
 			_.showMenu('mainMenu');
 		});
 		$(window).on('resize',function(e){
@@ -168,7 +172,6 @@ class JSRPG {
 		});
 	}
 	performAction(button){
-
 		var _=this;
 		if(!_.keyDown){
 			_.keyDown = true;
@@ -236,13 +239,11 @@ class JSRPG {
 		var action = button.attr('data-action');
 
 		switch(action){
-			case 'updateSettings':
-				_.updateSettings();
-				break;
 			case 'checkRadioSetting':
 				var radioName = button.find('input').attr('name');
 				$('#menu input[name='+radioName+']').removeAttr('checked');
 				button.find('input').attr('checked','checked');
+				_.updateSettings();
 				break;
 			case 'openSubmenu':
 				var menu = button.attr('data-menu');
@@ -613,9 +614,9 @@ class JSRPG {
 		$('#root').append(map);
 		var menu = 
 		`
-		<button id="menu-toggle">
+		<a id="menu-toggle" href="#">
 			<span id="hamburger"><span></span></span>
-		</button>
+		</a>
 		<div id="menu" class="screen">
 			<div class="window">
 				<div class="content">
@@ -631,16 +632,16 @@ class JSRPG {
 		var controls = 
 		`<div id="controls">
 			<div id="dpad">
-				<button class="left btn" data-btn="w"></button>
-				<button class="up btn" data-btn="n"></button>
-				<button class="right btn" data-btn="e"></button>
-				<button class="down btn" data-btn="s"></button>
+				<a class="left btn" data-btn="w" href="#"></a>
+				<a class="up btn" data-btn="n" href="#"></a>
+				<a class="right btn" data-btn="e" href="#"></a>
+				<a class="down btn" data-btn="s" href="#"></a>
 			</div>
 			<div id="buttons">
-				<button class="_a btn" data-btn="a"></button>
-				<button class="_b btn" data-btn="b"></button>
+				<a class="_a btn" data-btn="a" href="#"></a>
+				<a class="_b btn" data-btn="b" href="#"></a>
 			</div>
-			<button class="start btn" data-btn="start"></button>
+			<a class="start btn" data-btn="start" href="#"></a>
 		</div>`;
 		$('#root').append(controls);
 		return true;

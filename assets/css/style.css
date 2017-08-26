@@ -342,6 +342,7 @@ h1,h2,h3,h4,h5,h6{
     height: 33.33%;
     background-color: rgba(255,255,255,0.5);
     border: none;
+    cursor: pointer;
 }
 #controls #dpad .btn:before{
     position: absolute;
@@ -414,6 +415,7 @@ h1,h2,h3,h4,h5,h6{
     border-radius: 100%;
     display: table;
     border: none;
+    cursor: pointer;
 }
 #controls #buttons ._a{
     left: 0;
@@ -442,6 +444,7 @@ h1,h2,h3,h4,h5,h6{
     left: 40vw;
     background-color: rgba(255,255,255,0.5);
     border: none;
+    cursor: pointer;
 }
 .screen .window .content .display .setting.btn{
     display: block;

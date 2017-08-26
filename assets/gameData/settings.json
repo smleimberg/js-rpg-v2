@@ -25,7 +25,7 @@
 	"screen":{
 		"text":"Window Size:",
 		"type":"radio",
-		"value":"fs",
+		"value":"normal",
 		"options":[
 			{
 				"text":"Normal",
@@ -40,7 +40,7 @@
 	"input":{
 		"text":"Controls:",
 		"type":"radio",
-		"value":"gbc",
+		"value":"normal",
 		"options":[
 			{
 				"text":"GameBoy Like",
