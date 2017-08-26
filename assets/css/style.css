@@ -343,6 +343,7 @@ h1,h2,h3,h4,h5,h6{
     background-color: rgba(255,255,255,0.5);
     border: none;
     cursor: pointer;
+    font-size: 50px;
 }
 #controls #dpad .btn:before{
     position: absolute;
@@ -416,6 +417,7 @@ h1,h2,h3,h4,h5,h6{
     display: table;
     border: none;
     cursor: pointer;
+    font-size: 50px;
 }
 #controls #buttons ._a{
     left: 0;
@@ -445,6 +447,7 @@ h1,h2,h3,h4,h5,h6{
     background-color: rgba(255,255,255,0.5);
     border: none;
     cursor: pointer;
+    font-size: 50px;
 }
 .screen .window .content .display .setting.btn{
     display: block;
